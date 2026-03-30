@@ -1,0 +1,3 @@
+matang
+setengah_matang
+terlalu_matang

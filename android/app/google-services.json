@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "271054827387",
+    "project_id": "banalyze-d42d9",
+    "storage_bucket": "banalyze-d42d9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:271054827387:android:abb6c4d963158db6fc57de",
+        "android_client_info": {
+          "package_name": "com.example.banalyze"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC3QuPNR864fTNukUvd302WBwrFwMKx_Fk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
