@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:banalyze/features/splash/pages/splash_page.dart';
-import 'package:banalyze/features/navigation/main_navigation.dart';
+import 'package:banalyze/shared/widgets/app_navigation.dart';
 import 'package:banalyze/features/article/pages/article_detail_page.dart';
 import 'package:banalyze/features/auth/pages/login_page.dart';
 import 'package:banalyze/features/auth/pages/register_page.dart';
