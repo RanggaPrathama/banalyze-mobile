@@ -272,57 +272,57 @@ class _EditProfilePageState extends State<EditProfilePage> {
             const SizedBox(height: 28),
 
             // Preferences
-            Text(
-              'PREFERENCES',
-              style: GoogleFonts.poppins(
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
-                color: hintColor,
-                letterSpacing: 1,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-              decoration: BoxDecoration(
-                color: cardColor,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: borderColor),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Icon(
-                      Icons.notifications_active_outlined,
-                      size: 18,
-                      color: AppColors.primary,
-                    ),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Text(
-                      'Ripeness Alerts',
-                      style: GoogleFonts.poppins(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: textColor,
-                      ),
-                    ),
-                  ),
-                  Switch.adaptive(
-                    value: profileProvider.ripenessAlerts,
-                    onChanged: profileProvider.setRipenessAlerts,
-                    activeColor: AppColors.primary,
-                  ),
-                ],
-              ),
-            ),
+            // Text(
+            //   'PREFERENCES',
+            //   style: GoogleFonts.poppins(
+            //     fontSize: 11,
+            //     fontWeight: FontWeight.w700,
+            //     color: hintColor,
+            //     letterSpacing: 1,
+            //   ),
+            // ),
+            // const SizedBox(height: 12),
+            // Container(
+            //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+            //   decoration: BoxDecoration(
+            //     color: cardColor,
+            //     borderRadius: BorderRadius.circular(14),
+            //     border: Border.all(color: borderColor),
+            //   ),
+            //   child: Row(
+            //     children: [
+            //       Container(
+            //         width: 36,
+            //         height: 36,
+            //         decoration: BoxDecoration(
+            //           color: AppColors.primary.withValues(alpha: 0.12),
+            //           borderRadius: BorderRadius.circular(10),
+            //         ),
+            //         child: const Icon(
+            //           Icons.notifications_active_outlined,
+            //           size: 18,
+            //           color: AppColors.primary,
+            //         ),
+            //       ),
+            //       const SizedBox(width: 14),
+            //       Expanded(
+            //         child: Text(
+            //           'Ripeness Alerts',
+            //           style: GoogleFonts.poppins(
+            //             fontSize: 14,
+            //             fontWeight: FontWeight.w500,
+            //             color: textColor,
+            //           ),
+            //         ),
+            //       ),
+            //       Switch.adaptive(
+            //         value: profileProvider.ripenessAlerts,
+            //         onChanged: profileProvider.setRipenessAlerts,
+            //         activeColor: AppColors.primary,
+            //       ),
+            //     ],
+            //   ),
+            // ),
             const SizedBox(height: 32),
 
             // Save button

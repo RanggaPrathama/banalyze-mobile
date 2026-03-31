@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:banalyze/core/constants/app_colors.dart';
-import 'package:banalyze/features/profile/widgets/about_menu_tile.dart';
 import 'package:banalyze/features/profile/widgets/about_section_card.dart';
 import 'package:banalyze/features/profile/widgets/about_tech_row.dart';
 
@@ -112,35 +111,49 @@ class AboutAppPage extends StatelessWidget {
             ),
             const SizedBox(height: 24),
 
-            // Menu tiles
-            AboutMenuTile(
+            // Collapsible tiles
+            _CollapsibleTile(
               icon: Icons.description_outlined,
               label: 'Terms of Service',
               cardColor: cardColor,
               borderColor: borderColor,
               textColor: textColor,
               subtextColor: subtextColor,
-              onTap: () {},
+              content:
+                  'Dengan menggunakan aplikasi Banalyze, Anda menyetujui bahwa:\n\n'
+                  '• Aplikasi ini digunakan untuk tujuan edukasi dan analisis kematangan pisang.\n'
+                  '• Hasil klasifikasi bersifat estimasi dan tidak menjamin akurasi 100%.\n'
+                  '• Pengguna bertanggung jawab atas keputusan yang diambil berdasarkan hasil analisis.\n'
+                  '• Dilarang menggunakan aplikasi untuk tujuan yang melanggar hukum.',
             ),
             const SizedBox(height: 10),
-            AboutMenuTile(
+            _CollapsibleTile(
               icon: Icons.shield_outlined,
               label: 'Privacy Policy',
               cardColor: cardColor,
               borderColor: borderColor,
               textColor: textColor,
               subtextColor: subtextColor,
-              onTap: () {},
+              content:
+                  'Kami menghargai privasi Anda:\n\n'
+                  '• Data gambar yang Anda unggah hanya digunakan untuk proses klasifikasi.\n'
+                  '• Informasi akun (nama, email) disimpan secara aman di server kami.\n'
+                  '• Kami tidak membagikan data pribadi Anda kepada pihak ketiga.\n'
+                  '• Anda dapat menghapus akun dan data Anda kapan saja.',
             ),
             const SizedBox(height: 10),
-            AboutMenuTile(
+            _CollapsibleTile(
               icon: Icons.headset_mic_outlined,
               label: 'Support Contact',
               cardColor: cardColor,
               borderColor: borderColor,
               textColor: textColor,
               subtextColor: subtextColor,
-              onTap: () {},
+              content:
+                  'Hubungi kami jika Anda membutuhkan bantuan:\n\n'
+                  '• Email: support@banalyze.com\n'
+                  '• WhatsApp: +62 812-XXXX-XXXX\n'
+                  '• Jam operasional: Senin–Jumat, 09:00–17:00 WIB',
             ),
             const SizedBox(height: 32),
 
@@ -148,6 +161,65 @@ class AboutAppPage extends StatelessWidget {
             Text(
               '© 2025 Banalyze. All rights reserved.',
               style: GoogleFonts.poppins(fontSize: 11, color: hintColor),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _CollapsibleTile extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String content;
+  final Color cardColor;
+  final Color borderColor;
+  final Color textColor;
+  final Color subtextColor;
+
+  const _CollapsibleTile({
+    required this.icon,
+    required this.label,
+    required this.content,
+    required this.cardColor,
+    required this.borderColor,
+    required this.textColor,
+    required this.subtextColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: cardColor,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: borderColor),
+      ),
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          tilePadding: const EdgeInsets.symmetric(horizontal: 16),
+          childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
+          leading: Icon(icon, size: 20, color: subtextColor),
+          title: Text(
+            label,
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: textColor,
+            ),
+          ),
+          iconColor: subtextColor,
+          collapsedIconColor: subtextColor,
+          children: [
+            Text(
+              content,
+              style: GoogleFonts.poppins(
+                fontSize: 13,
+                color: subtextColor,
+                height: 1.5,
+              ),
             ),
           ],
         ),

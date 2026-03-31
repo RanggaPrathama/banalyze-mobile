@@ -213,6 +213,9 @@ class _HomeBodyState extends State<_HomeBody> {
                           subtitle: _relativeTime(scan.dateTime),
                           statusColor: scan.ripeness.color,
                           statusIcon: _ripenessIcon(scan.ripeness),
+                          onTap: () => Navigator.of(
+                            context,
+                          ).pushNamed(AppRouter.scanDetail, arguments: scan.id),
                         ),
                       ),
                     ),

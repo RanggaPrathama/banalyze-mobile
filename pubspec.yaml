@@ -44,6 +44,8 @@ dependencies:
   image_picker: ^1.2.1
   tflite_flutter: ^0.12.1
   image: ^4.8.0
+  flutter_launcher_icons: ^0.14.4
+  url_launcher: ^6.3.1
 
 dev_dependencies:
   flutter_test:
@@ -57,6 +59,16 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   auto_route_generator: ^10.5.0
   build_runner: ^2.12.2
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path_android: "assets/logo/logo_launcher_app.png"
+  image_path_ios: "assets/logo/logo_launcher_app.png"
+  remove_alpha_ios: true
+  min_sdk_android: 21
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/logo/logo_launcher_app.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

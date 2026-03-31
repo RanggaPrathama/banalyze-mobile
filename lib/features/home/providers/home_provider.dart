@@ -87,7 +87,7 @@ class HomeProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final result = await _historyRepository.getHistory(paginate: 10);
+      final result = await _historyRepository.getHistory(noPagination: true);
       _recentScans = result.items;
     } catch (e) {
       debugPrint('Home load recent scans error: $e');

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:banalyze/core/constants/app_colors.dart';
 import 'package:banalyze/core/constants/app_strings.dart';
+import 'package:banalyze/features/history/providers/history_provider.dart';
 import 'package:banalyze/features/home/pages/home_page.dart';
 import 'package:banalyze/features/history/pages/history_page.dart';
 import 'package:banalyze/features/article/pages/article_list_page.dart';
@@ -18,15 +20,25 @@ class MainNavigation extends StatefulWidget {
 
 class _MainNavigationState extends State<MainNavigation> {
   int _currentIndex = 0;
+  late final HistoryProvider _historyProvider;
 
-  final List<Widget> _pages = const [
-    HomePage(),
-    HistoryPage(),
-    ArticleListPage(),
-    ProfilePage(),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _historyProvider = HistoryProvider()..loadInitial();
+  }
+
+  @override
+  void dispose() {
+    _historyProvider.dispose();
+    super.dispose();
+  }
 
   void _onTabTapped(int index) {
+    // Refresh history data setiap kali tab History dibuka
+    if (index == 1 && index != _currentIndex) {
+      _historyProvider.refresh();
+    }
     setState(() => _currentIndex = index);
   }
 
@@ -125,7 +137,18 @@ class _MainNavigationState extends State<MainNavigation> {
     final barColor = isDark ? AppColors.darkSurface : AppColors.white;
 
     return Scaffold(
-      body: IndexedStack(index: _currentIndex, children: _pages),
+      body: IndexedStack(
+        index: _currentIndex,
+        children: [
+          const HomePage(),
+          ChangeNotifierProvider.value(
+            value: _historyProvider,
+            child: const HistoryPage(),
+          ),
+          const ArticleListPage(),
+          const ProfilePage(),
+        ],
+      ),
       extendBody: true,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: _ScanButton(onTap: _onScanTapped),

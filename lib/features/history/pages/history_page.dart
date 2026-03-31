@@ -11,10 +11,7 @@ class HistoryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => HistoryProvider()..loadInitial(),
-      child: const _HistoryBody(),
-    );
+    return const _HistoryBody();
   }
 }
 

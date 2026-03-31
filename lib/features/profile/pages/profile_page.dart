@@ -6,13 +6,51 @@ import 'package:banalyze/core/constants/app_colors.dart';
 import 'package:banalyze/core/theme/theme_provider.dart';
 import 'package:banalyze/shared/widgets/app_snackbar.dart';
 import 'package:banalyze/features/auth/providers/auth_provider.dart';
+import 'package:banalyze/features/history/repositories/history_repository.dart';
 import 'package:banalyze/features/profile/widgets/profile_menu_tile.dart';
 import 'package:banalyze/features/profile/widgets/profile_section_label.dart';
 import 'package:banalyze/features/profile/widgets/profile_stat_card.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  final HistoryRepository _historyRepository = HistoryRepository();
+  int _totalScans = 0;
+  String _accuracy = '—';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadStats();
+  }
+
+  Future<void> _loadStats() async {
+    try {
+      final result = await _historyRepository.getHistory(noPagination: true);
+      final scans = result.items;
+      final total = scans.length;
+      String accuracy = '—';
+      if (scans.isNotEmpty) {
+        final avg =
+            scans.map((s) => s.confidence).reduce((a, b) => a + b) /
+            scans.length;
+        accuracy = '${(avg * 100).round()}%';
+      }
+      if (mounted) {
+        setState(() {
+          _totalScans = total;
+          _accuracy = accuracy;
+        });
+      }
+    } catch (_) {}
+  }
+
+  @override
   @override
   Widget build(BuildContext context) {
     final user = context.watch<AuthProvider>().user;
@@ -150,7 +188,7 @@ class ProfilePage extends StatelessWidget {
                   children: [
                     Expanded(
                       child: ProfileStatCard(
-                        value: '124',
+                        value: '$_totalScans',
                         label: 'TOTAL SCANS',
                         cardColor: cardColor,
                         textColor: textColor,
@@ -161,7 +199,7 @@ class ProfilePage extends StatelessWidget {
                     const SizedBox(width: 12),
                     Expanded(
                       child: ProfileStatCard(
-                        value: '98%',
+                        value: _accuracy,
                         label: 'ACCURACY',
                         cardColor: cardColor,
                         textColor: textColor,
@@ -274,6 +312,7 @@ class ProfilePage extends StatelessWidget {
                   cardColor: cardColor,
                   textColor: textColor,
                   borderColor: borderColor,
+                  onTap: () => Navigator.pushNamed(context, '/help-center'),
                 ),
                 const SizedBox(height: 20),
                 // Logout

@@ -10,6 +10,7 @@ import 'package:banalyze/features/history/pages/scan_detail_page.dart';
 import 'package:banalyze/features/history/pages/scan_error_page.dart';
 import 'package:banalyze/features/profile/pages/edit_profile_page.dart';
 import 'package:banalyze/features/profile/pages/about_app_page.dart';
+import 'package:banalyze/features/profile/pages/help_center_page.dart';
 
 /// Centralized route names and navigation helpers.
 class AppRouter {
@@ -27,6 +28,7 @@ class AppRouter {
   static const String scanError = '/scan-error';
   static const String editProfile = '/edit-profile';
   static const String aboutApp = '/about-app';
+  static const String helpCenter = '/help-center';
 
   /// Route map for [MaterialApp.onGenerateRoute].
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
@@ -40,7 +42,7 @@ class AppRouter {
         return _slide(ImageReviewPage(imagePath: imagePath));
       case classificationResult:
         final data = settings.arguments as Map<String, dynamic>;
-      return _slide(ClassificationResultPage(resultData: data));
+        return _slide(ClassificationResultPage(resultData: data));
       case articleDetail:
         final articleId = settings.arguments as String;
         return _slide(ArticleDetailPage(articleId: articleId));
@@ -57,6 +59,8 @@ class AppRouter {
         return _slide(const EditProfilePage());
       case aboutApp:
         return _slide(const AboutAppPage());
+      case helpCenter:
+        return _slide(const HelpCenterPage());
       default:
         return _fade(
           const Scaffold(body: Center(child: Text('Page not found'))),

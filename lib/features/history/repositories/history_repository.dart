@@ -25,6 +25,7 @@ class HistoryRepository {
     String? search,
     String orderBy = 'createdAt',
     String orderType = 'DESC',
+    bool noPagination = false,
   }) async {
     final queryParams = <String, dynamic>{
       'page': page,
@@ -32,6 +33,9 @@ class HistoryRepository {
       'order_by': orderBy,
       'order_type': orderType,
     };
+    if (noPagination) {
+      queryParams['no_pagination'] = true;
+    }
     if (search != null && search.isNotEmpty) {
       queryParams['search'] = search;
     }

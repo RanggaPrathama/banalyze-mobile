@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:banalyze/features/auth/providers/auth_provider.dart';
 import 'package:banalyze/features/splash/providers/splash_provider.dart';
@@ -142,6 +143,27 @@ class _SplashViewState extends State<_SplashView>
               children: [
                 const Spacer(flex: 2),
                 const SplashLogo(),
+                const SizedBox(height: 20),
+                Text(
+                  'Get Ready!',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.poppins(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.white,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Smart Banana Ripeness Detection',
+                  style: GoogleFonts.poppins(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.white.withValues(alpha: 0.6),
+                    letterSpacing: 0.2,
+                  ),
+                ),
                 const Spacer(flex: 3),
                 SplashLoadingSection(progressAnimation: _progressAnimation),
                 const SizedBox(height: 24),
