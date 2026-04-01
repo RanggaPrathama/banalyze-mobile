@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:banalyze/core/api_client.dart';
 import 'package:banalyze/shared/widgets/app_snackbar.dart';
 import 'package:banalyze/features/auth/providers/auth_provider.dart';
+import 'package:banalyze/features/history/repositories/history_repository.dart';
 import 'package:banalyze/shared/models/user_model.dart';
 
 class ProfileProvider extends ChangeNotifier {
@@ -13,16 +14,21 @@ class ProfileProvider extends ChangeNotifier {
 
   final TextEditingController fullNameController;
   final TextEditingController phoneController;
+  final HistoryRepository _historyRepo = HistoryRepository();
 
   bool _ripenessAlerts = true;
   bool _isSaving = false;
   bool _isUploadingAvatar = false;
   String? _avatarUrl;
+  int _totalScans = 0;
+  String _accuracy = '—';
 
   bool get ripenessAlerts => _ripenessAlerts;
   bool get isSaving => _isSaving;
   bool get isUploadingAvatar => _isUploadingAvatar;
   String? get avatarUrl => _avatarUrl;
+  int get totalScans => _totalScans;
+  String get accuracy => _accuracy;
 
   void setRipenessAlerts(bool value) {
     if (_ripenessAlerts == value) return;
@@ -34,8 +40,26 @@ class ProfileProvider extends ChangeNotifier {
     fullNameController.text = name ?? '';
     phoneController.text = phone ?? '';
     _avatarUrl = avatar;
-    print(_avatarUrl);
     notifyListeners();
+  }
+
+  /// Fetches total scans and average accuracy from history API.
+  /// Safe to call multiple times — re-fetches fresh data each time.
+  Future<void> loadStats() async {
+    try {
+      final result = await _historyRepo.getHistory(noPagination: true);
+      final scans = result.items;
+      _totalScans = scans.length;
+      if (scans.isNotEmpty) {
+        final avg =
+            scans.map((s) => s.confidence).reduce((a, b) => a + b) /
+            scans.length;
+        _accuracy = '${(avg * 100).round()}%';
+      } else {
+        _accuracy = '—';
+      }
+      notifyListeners();
+    } catch (_) {}
   }
 
   /// PUT /api/user/profile — { nama_user, no_telephone }

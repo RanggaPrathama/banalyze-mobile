@@ -43,6 +43,12 @@
 	</array>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Banalyze needs camera access for real-time banana ripeness detection.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Microphone access is not used by Banalyze.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Banalyze needs photo library access to select banana images for analysis.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 </dict>

@@ -6,6 +6,7 @@ import 'package:banalyze/features/auth/pages/login_page.dart';
 import 'package:banalyze/features/auth/pages/register_page.dart';
 import 'package:banalyze/features/classifications/pages/image_review.dart';
 import 'package:banalyze/features/classifications/pages/classification_result.dart';
+import 'package:banalyze/features/classifications/pages/realtime_classification_page.dart';
 import 'package:banalyze/features/history/pages/scan_detail_page.dart';
 import 'package:banalyze/features/history/pages/scan_error_page.dart';
 import 'package:banalyze/features/profile/pages/edit_profile_page.dart';
@@ -25,6 +26,7 @@ class AppRouter {
   static const String register = '/register';
   static const String scanDetail = '/scan-detail';
   static const String classificationResult = '/classification-result';
+  static const String realtimeClassification = '/realtime-classification';
   static const String scanError = '/scan-error';
   static const String editProfile = '/edit-profile';
   static const String aboutApp = '/about-app';
@@ -43,6 +45,8 @@ class AppRouter {
       case classificationResult:
         final data = settings.arguments as Map<String, dynamic>;
         return _slide(ClassificationResultPage(resultData: data));
+      case realtimeClassification:
+        return _slide(const RealtimeClassificationPage());
       case articleDetail:
         final articleId = settings.arguments as String;
         return _slide(ArticleDetailPage(articleId: articleId));

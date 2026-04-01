@@ -131,7 +131,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
         ? AppColors.darkTextSecondary
         : AppColors.textSecondary;
     final hintColor = isDark ? AppColors.darkTextHint : AppColors.textHint;
-    final cardColor = isDark ? AppColors.darkCard : Colors.grey.shade50;
     final borderColor = isDark ? AppColors.darkBorder : Colors.grey.shade200;
     final fieldBg = isDark ? AppColors.darkSurface : Colors.grey.shade50;
 

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:banalyze/core/constants/app_colors.dart';
 
 /// Modern banner card prompting the user to start a new scan.
 class ScanBanner extends StatelessWidget {

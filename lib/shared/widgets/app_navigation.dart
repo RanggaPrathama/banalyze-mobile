@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:banalyze/core/constants/app_colors.dart';
 import 'package:banalyze/core/constants/app_strings.dart';
 import 'package:banalyze/features/history/providers/history_provider.dart';
+import 'package:banalyze/features/profile/providers/profile_provider.dart';
 import 'package:banalyze/features/home/pages/home_page.dart';
 import 'package:banalyze/features/history/pages/history_page.dart';
 import 'package:banalyze/features/article/pages/article_list_page.dart';
@@ -35,9 +36,13 @@ class _MainNavigationState extends State<MainNavigation> {
   }
 
   void _onTabTapped(int index) {
-    // Refresh history data setiap kali tab History dibuka
+    // Refresh history setiap kali tab History dibuka
     if (index == 1 && index != _currentIndex) {
       _historyProvider.refresh();
+    }
+    // Refresh profile stats setiap kali tab Profile dibuka
+    if (index == 3 && index != _currentIndex) {
+      context.read<ProfileProvider>().loadStats();
     }
     setState(() => _currentIndex = index);
   }
@@ -105,6 +110,44 @@ class _MainNavigationState extends State<MainNavigation> {
                 subtitle: 'Select existing photo',
                 onTap: () => Navigator.pop(ctx, ImageSource.gallery),
                 isDark: isDark,
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: Divider(
+                      color: subtextColor.withValues(alpha: 0.18),
+                      thickness: 1,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Text(
+                      'or try Realtime feature',
+                      style: GoogleFonts.poppins(
+                        fontSize: 11,
+                        color: subtextColor.withValues(alpha: 0.7),
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Divider(
+                      color: subtextColor.withValues(alpha: 0.18),
+                      thickness: 1,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              _LiveDetectionButton(
+                onTap: () {
+                  Navigator.pop(ctx);
+                  Navigator.pushNamed(
+                    context,
+                    AppRouter.realtimeClassification,
+                  );
+                },
               ),
               const SizedBox(height: 8),
             ],
@@ -311,6 +354,168 @@ class _NavItem extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _LiveDetectionButton extends StatelessWidget {
+  final VoidCallback onTap;
+  const _LiveDetectionButton({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 18),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFF0D0D1A), Color(0xFF12192E), Color(0xFF0A1628)],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: AppColors.primary.withValues(alpha: 0.55),
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primary.withValues(alpha: 0.22),
+              blurRadius: 18,
+              spreadRadius: -2,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            // Icon container with sparkle badge
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        AppColors.primary.withValues(alpha: 0.25),
+                        AppColors.primary.withValues(alpha: 0.08),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: AppColors.primary.withValues(alpha: 0.45),
+                    ),
+                  ),
+                  child: const Icon(
+                    Icons.videocam_rounded,
+                    color: AppColors.primary,
+                    size: 24,
+                  ),
+                ),
+                Positioned(
+                  top: -5,
+                  right: -5,
+                  child: Container(
+                    padding: const EdgeInsets.all(3),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primary.withValues(alpha: 0.5),
+                          blurRadius: 6,
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.auto_awesome,
+                      color: AppColors.accent,
+                      size: 9,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(width: 14),
+
+            // Text column
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        'Realtime AI Detection',
+                        style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 7,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [AppColors.primary, AppColors.primaryDark],
+                          ),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          'AI',
+                          style: GoogleFonts.poppins(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.accent,
+                            letterSpacing: 0.8,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Text(
+                    'Deteksi kematangan pisang secara real-time',
+                    style: GoogleFonts.poppins(
+                      fontSize: 11,
+                      color: Colors.white.withValues(alpha: 0.55),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Tri-star sparkle on right
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.auto_awesome, color: AppColors.primary, size: 15),
+                const SizedBox(height: 4),
+                Icon(
+                  Icons.auto_awesome,
+                  color: AppColors.primary.withValues(alpha: 0.45),
+                  size: 10,
+                ),
+                const SizedBox(height: 3),
+                Icon(
+                  Icons.auto_awesome,
+                  color: AppColors.primary.withValues(alpha: 0.2),
+                  size: 7,
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

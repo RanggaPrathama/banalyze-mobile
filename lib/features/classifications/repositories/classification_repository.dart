@@ -56,22 +56,32 @@ class ClassificationRepository {
     _isInitialized = true;
   }
 
-  /// Classify an image file.
-  /// Returns a [ClassificationResult] with the top label and confidence.
+  /// Classify an image file (reads from disk).
   Future<ClassificationResult> classify(File imageFile) async {
+    _assertReady();
+    final bytes = await imageFile.readAsBytes();
+    final image = img.decodeImage(bytes);
+    if (image == null) throw ArgumentError('Could not decode image file.');
+    return _runInference(image);
+  }
+
+  /// Classify a pre-decoded [img.Image] directly — no disk I/O.
+  /// Used by the realtime stream pipeline to avoid JPEG encode/decode round-trip.
+  ClassificationResult classifyImage(img.Image image) {
+    _assertReady();
+    return _runInference(image);
+  }
+
+  void _assertReady() {
     if (!_isInitialized || _interpreter == null) {
       throw StateError(
         'ClassificationRepository not initialized. Call init() first.',
       );
     }
+  }
 
-    // Read & decode image
-    final bytes = await imageFile.readAsBytes();
-    final image = img.decodeImage(bytes);
-    if (image == null) {
-      throw ArgumentError('Could not decode image file.');
-    }
-
+  /// Core inference: resize → build tensor → run model → parse output.
+  ClassificationResult _runInference(img.Image image) {
     // Preprocess: resize to 224x224
     final resized = img.copyResize(
       image,
@@ -81,36 +91,26 @@ class ClassificationRepository {
     );
 
     // Build input tensor — shape [1, 224, 224, 3]
-    // EfficientNet quantized expects uint8 input [0..255]
     final input = _imageToInputTensor(resized);
 
     // Prepare output tensor — shape [1, numLabels]
     final outputShape = _interpreter!.getOutputTensor(0).shape;
     final outputType = _interpreter!.getOutputTensor(0).type;
 
-    // Run inference based on output type
     if (outputType == TensorType.uint8) {
-      // Quantized output
       final output = List.generate(
         outputShape[0],
         (_) => List<int>.filled(outputShape[1], 0),
       );
       _interpreter!.run(input, output);
-
-      // Convert to Uint8List for processing
-      final uint8Output = Uint8List.fromList(output[0]);
-      return _processQuantizedOutput(uint8Output);
+      return _processQuantizedOutput(Uint8List.fromList(output[0]));
     } else {
-      // Float output
       final output = List.generate(
         outputShape[0],
         (_) => List<double>.filled(outputShape[1], 0.0),
       );
       _interpreter!.run(input, output);
-
-      // Convert to Float32List for processing
-      final floatOutput = Float32List.fromList(output[0]);
-      return _processFloatOutput(floatOutput);
+      return _processFloatOutput(Float32List.fromList(output[0]));
     }
   }
 

@@ -29,6 +29,7 @@ class ClassificationProvider extends ChangeNotifier {
   bool get isSaving => _isSaving;
   String? get saveError => _saveError;
   bool get savedSuccessfully => _savedSuccessfully;
+  ClassificationRepository get repository => _repository;
 
   bool get isLoading => _status == ClassificationStatus.loading;
 
