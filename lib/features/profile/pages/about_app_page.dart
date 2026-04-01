@@ -87,8 +87,8 @@ class AboutAppPage extends StatelessWidget {
                   label: 'Klasifikasi Model',
                   value: 'EfficientNetV2',
                 ),
-                AboutTechRow(label: 'Optimized With', value: 'MobileNetV3'),
-                AboutTechRow(label: 'Training Data', value: '50,000 samples'),
+                AboutTechRow(label: 'Optimized With', value: 'TensorRT'),
+                AboutTechRow(label: 'Training Data', value: '9000 samples'),
               ],
             ),
             const SizedBox(height: 16),
@@ -105,8 +105,8 @@ class AboutAppPage extends StatelessWidget {
                   label: 'University',
                   value: 'Universitas Banalyze',
                 ),
-                AboutTechRow(label: 'Developer', value: 'Rangga'),
-                AboutTechRow(label: 'Supervisor', value: '-'),
+                AboutTechRow(label: 'Developer', value: 'Rangga Prathama'),
+                // AboutTechRow(label: 'Supervisor', value: '-'),
               ],
             ),
             const SizedBox(height: 24),
@@ -151,8 +151,8 @@ class AboutAppPage extends StatelessWidget {
               subtextColor: subtextColor,
               content:
                   'Hubungi kami jika Anda membutuhkan bantuan:\n\n'
-                  '• Email: support@banalyze.com\n'
-                  '• WhatsApp: +62 812-XXXX-XXXX\n'
+                  '• Email: ranggaprathama9@gmail.com\n'
+                  '• WhatsApp: +62 87794413362\n'
                   '• Jam operasional: Senin–Jumat, 09:00–17:00 WIB',
             ),
             const SizedBox(height: 32),

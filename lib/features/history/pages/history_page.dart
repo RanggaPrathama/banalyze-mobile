@@ -5,6 +5,8 @@ import 'package:banalyze/core/constants/app_colors.dart';
 import 'package:banalyze/shared/models/scan_history.dart';
 import 'package:banalyze/shared/widgets/paginated_list_view.dart';
 import 'package:banalyze/features/history/providers/history_provider.dart';
+import 'package:banalyze/features/history/widgets/scan_summary_card.dart';
+import 'package:banalyze/features/history/widgets/scan_history_tile.dart';
 
 class HistoryPage extends StatelessWidget {
   const HistoryPage({super.key});
@@ -61,7 +63,7 @@ class _HistoryBody extends StatelessWidget {
             children: [
               // Header
               Padding(
-                padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                 child: Row(
                   children: [
                     Text(
@@ -72,13 +74,28 @@ class _HistoryBody extends StatelessWidget {
                         color: textColor,
                       ),
                     ),
-                    const Spacer(),
-                    Icon(
-                      Icons.settings_outlined,
-                      color: subtextColor,
-                      size: 22,
-                    ),
+                    // const Spacer(),
+                    // Icon(
+                    //   Icons.settings_outlined,
+                    //   color: subtextColor,
+                    //   size: 22,
+                    // ),
                   ],
+                ),
+              ),
+              const SizedBox(height: 14),
+
+              // Scan Summary
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
+                child: ScanSummaryCard(
+                  ripeCount: provider.ripeCount,
+                  partiallyRipeCount: provider.partiallyRipeCount,
+                  overripeUnripeCount: provider.overripeUnripeCount,
+                  totalCount: provider.thisWeekTotal,
                 ),
               ),
               const SizedBox(height: 14),
@@ -199,7 +216,7 @@ class _HistoryBody extends StatelessWidget {
                         ),
                       );
                     }
-                    return _ScanHistoryTile(
+                    return ScanHistoryTile(
                       scan: scan,
                       isDark: isDark,
                       textColor: textColor,
@@ -249,179 +266,5 @@ class _HistoryBody extends StatelessWidget {
       }
     }
     return flat;
-  }
-}
-
-class _ScanHistoryTile extends StatelessWidget {
-  final ScanHistory scan;
-  final bool isDark;
-  final Color textColor;
-  final Color subtextColor;
-  final Color cardColor;
-  final Color borderColor;
-  final VoidCallback onTap;
-
-  const _ScanHistoryTile({
-    required this.scan,
-    required this.isDark,
-    required this.textColor,
-    required this.subtextColor,
-    required this.cardColor,
-    required this.borderColor,
-    required this.onTap,
-  });
-
-  String _formatTime(DateTime dt) {
-    final h = dt.hour;
-    final m = dt.minute.toString().padLeft(2, '0');
-    final period = h >= 12 ? 'PM' : 'AM';
-    final hour12 = h > 12 ? h - 12 : (h == 0 ? 12 : h);
-    return '$hour12:$m $period';
-  }
-
-  String _formatDate(DateTime dt) {
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    return '${months[dt.month - 1]} ${dt.day}, ${dt.year}';
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 10),
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: cardColor,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: borderColor),
-        ),
-        child: Row(
-          children: [
-            // Ripeness indicator
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: scan.ripeness.color.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Center(
-                child: Text('🍌', style: TextStyle(fontSize: 22)),
-              ),
-            ),
-            const SizedBox(width: 12),
-            // Info
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: scan.ripeness.color.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          scan.ripeness.label,
-                          style: GoogleFonts.poppins(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
-                            color: scan.ripeness.color,
-                          ),
-                        ),
-                      ),
-                      const Spacer(),
-                      Text(
-                        '${(scan.confidence * 100).round()}%',
-                        style: GoogleFonts.poppins(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: textColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    scan.title,
-                    style: GoogleFonts.poppins(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: textColor,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.schedule_rounded,
-                        size: 12,
-                        color: subtextColor,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        '${_formatDate(scan.dateTime)} • ${_formatTime(scan.dateTime)}',
-                        style: GoogleFonts.poppins(
-                          fontSize: 11,
-                          color: subtextColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 8),
-            // Confidence bar
-            SizedBox(
-              width: 40,
-              child: Column(
-                children: [
-                  Text(
-                    'Confident',
-                    style: GoogleFonts.poppins(
-                      fontSize: 7,
-                      fontWeight: FontWeight.w500,
-                      color: subtextColor,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
-                    child: LinearProgressIndicator(
-                      value: scan.confidence,
-                      backgroundColor: isDark
-                          ? AppColors.darkBorder
-                          : Colors.grey.shade200,
-                      valueColor: AlwaysStoppedAnimation(scan.ripeness.color),
-                      minHeight: 4,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

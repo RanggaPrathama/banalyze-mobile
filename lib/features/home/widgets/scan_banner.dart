@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:banalyze/core/constants/app_colors.dart';
-import 'package:banalyze/router/app_router.dart';
 
 /// Modern banner card prompting the user to start a new scan.
 class ScanBanner extends StatelessWidget {
@@ -55,38 +54,23 @@ class ScanBanner extends StatelessWidget {
                     color: Colors.white.withValues(alpha: 0.8),
                   ),
                 ),
-                const SizedBox(height: 14),
-                GestureDetector(
-                  onTap: () => Navigator.of(context).pushNamed(AppRouter.scan),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 10,
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.touch_app_rounded,
+                      size: 14,
+                      color: Colors.white54,
                     ),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      borderRadius: BorderRadius.circular(12),
+                    const SizedBox(width: 6),
+                    Text(
+                      'Tap the scan button below to start',
+                      style: GoogleFonts.poppins(
+                        fontSize: 12,
+                        color: Colors.white54,
+                      ),
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(
-                          Icons.camera_alt_rounded,
-                          size: 16,
-                          color: AppColors.textPrimary,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          'Start Analysis',
-                          style: GoogleFonts.poppins(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textPrimary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  ],
                 ),
               ],
             ),

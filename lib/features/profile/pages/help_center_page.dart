@@ -125,7 +125,7 @@ class HelpCenterPage extends StatelessWidget {
                   _InfoRow(
                     icon: Icons.school_rounded,
                     label: 'Universitas',
-                    value: 'Universitas Banalyze',
+                    value: 'Universitas Airlangga',
                     textColor: textColor,
                     subtextColor: subtextColor,
                   ),
@@ -133,7 +133,7 @@ class HelpCenterPage extends StatelessWidget {
                   _InfoRow(
                     icon: Icons.email_rounded,
                     label: 'Email',
-                    value: 'rangga@banalyze.com',
+                    value: 'ranggaprathama9@gmail.com',
                     textColor: textColor,
                     subtextColor: subtextColor,
                   ),
@@ -141,7 +141,7 @@ class HelpCenterPage extends StatelessWidget {
                   _InfoRow(
                     icon: Icons.phone_rounded,
                     label: 'Telepon',
-                    value: '+62 812-XXXX-XXXX',
+                    value: '+62 87794413362',
                     textColor: textColor,
                     subtextColor: subtextColor,
                   ),
@@ -156,7 +156,7 @@ class HelpCenterPage extends StatelessWidget {
               height: 52,
               child: ElevatedButton.icon(
                 onPressed: () async {
-                  final uri = Uri(scheme: 'tel', path: '+62812XXXXXXXX');
+                  final uri = Uri(scheme: 'tel', path: '+6287794413362');
                   if (await canLaunchUrl(uri)) {
                     await launchUrl(uri);
                   }
@@ -187,7 +187,7 @@ class HelpCenterPage extends StatelessWidget {
               height: 52,
               child: OutlinedButton.icon(
                 onPressed: () async {
-                  final uri = Uri.parse('https://wa.me/62812XXXXXXXX');
+                  final uri = Uri.parse('https://wa.me/6287794413362');
                   if (await canLaunchUrl(uri)) {
                     await launchUrl(uri, mode: LaunchMode.externalApplication);
                   }

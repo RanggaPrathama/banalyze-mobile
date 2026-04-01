@@ -526,7 +526,7 @@ class _RipenessTimeline extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final stages = [
-      RipenessLevel.unripe,
+      RipenessLevel.partiallyRipe,
       RipenessLevel.ripe,
       RipenessLevel.overripe,
     ];

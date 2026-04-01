@@ -173,6 +173,32 @@ class HistoryProvider extends ChangeNotifier {
     }
   }
 
+  // ── Weekly Summary ────────────────────────────────────────────────────────
+
+  List<ScanHistory> get _thisWeekScans {
+    final now = DateTime.now();
+    final weekStart = now.subtract(Duration(days: now.weekday - 1));
+    final start = DateTime(weekStart.year, weekStart.month, weekStart.day);
+    return _scans.where((s) => s.dateTime.isAfter(start)).toList();
+  }
+
+  int get ripeCount =>
+      _thisWeekScans.where((s) => s.ripeness == RipenessLevel.ripe).length;
+
+  int get partiallyRipeCount => _thisWeekScans
+      .where((s) => s.ripeness == RipenessLevel.partiallyRipe)
+      .length;
+
+  int get overripeUnripeCount => _thisWeekScans
+      .where(
+        (s) =>
+            s.ripeness == RipenessLevel.overripe ||
+            s.ripeness == RipenessLevel.unripe,
+      )
+      .length;
+
+  int get thisWeekTotal => _thisWeekScans.length;
+
   @override
   void dispose() {
     _searchDebounce?.cancel();
