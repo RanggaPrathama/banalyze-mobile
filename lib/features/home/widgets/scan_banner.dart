@@ -62,11 +62,15 @@ class ScanBanner extends StatelessWidget {
                       color: Colors.white54,
                     ),
                     const SizedBox(width: 6),
-                    Text(
-                      'Tap the scan button below to start',
-                      style: GoogleFonts.poppins(
-                        fontSize: 12,
-                        color: Colors.white54,
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      child: Text(
+                        'Tap the scan button below to start',
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.poppins(
+                          fontSize: 12,
+                          color: Colors.white54,
+                        ),
                       ),
                     ),
                   ],

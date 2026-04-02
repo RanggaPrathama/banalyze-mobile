@@ -150,7 +150,7 @@ class _SplashViewState extends State<_SplashView>
                   style: GoogleFonts.poppins(
                     fontSize: 24,
                     fontWeight: FontWeight.w800,
-                    color: Colors.white,
+                    color: isDark ? Colors.white : AppColors.textPrimary,
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -160,7 +160,9 @@ class _SplashViewState extends State<_SplashView>
                   style: GoogleFonts.poppins(
                     fontSize: 13,
                     fontWeight: FontWeight.w400,
-                    color: Colors.white.withValues(alpha: 0.6),
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.6)
+                        : AppColors.textSecondary.withValues(alpha: 0.6),
                     letterSpacing: 0.2,
                   ),
                 ),

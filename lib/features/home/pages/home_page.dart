@@ -152,6 +152,7 @@ class _HomeBodyState extends State<_HomeBody> {
                                 stageColor: _parseCategoryColor(
                                   article.category.colorHex,
                                 ),
+                                thumbnailUrl: article.thumbnailUrl,
                                 onTap: () => Navigator.pushNamed(
                                   context,
                                   AppRouter.articleDetail,

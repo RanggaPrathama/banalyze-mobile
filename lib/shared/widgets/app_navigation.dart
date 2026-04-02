@@ -63,94 +63,110 @@ class _MainNavigationState extends State<MainNavigation> {
 
     final source = await showModalBottomSheet<ImageSource>(
       context: context,
-      backgroundColor: cardColor,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (ctx) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 20, 24, 16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: subtextColor.withValues(alpha: 0.3),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                'Select Image Source',
-                style: GoogleFonts.poppins(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: textColor,
-                ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                'Choose how to capture your banana image',
-                style: GoogleFonts.poppins(fontSize: 13, color: subtextColor),
-              ),
-              const SizedBox(height: 24),
-              _SourceOption(
-                icon: Icons.camera_alt_rounded,
-                label: 'Take Photo',
-                subtitle: 'Use camera to capture',
-                onTap: () => Navigator.pop(ctx, ImageSource.camera),
-                isDark: isDark,
-              ),
-              const SizedBox(height: 12),
-              _SourceOption(
-                icon: Icons.photo_library_rounded,
-                label: 'Choose from Gallery',
-                subtitle: 'Select existing photo',
-                onTap: () => Navigator.pop(ctx, ImageSource.gallery),
-                isDark: isDark,
-              ),
-              const SizedBox(height: 20),
-              Row(
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      useSafeArea: true,
+      enableDrag: true,
+      builder: (ctx) => DraggableScrollableSheet(
+        initialChildSize: 0.6,
+        minChildSize: 0.5,
+        maxChildSize: 0.92,
+        expand: false,
+        builder: (ctx, scrollController) => Container(
+          decoration: BoxDecoration(
+            color: cardColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: SingleChildScrollView(
+            controller: scrollController,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Expanded(
-                    child: Divider(
-                      color: subtextColor.withValues(alpha: 0.18),
-                      thickness: 1,
+                  Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: subtextColor.withValues(alpha: 0.3),
+                      borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    child: Text(
-                      'or try Realtime feature',
-                      style: GoogleFonts.poppins(
-                        fontSize: 11,
-                        color: subtextColor.withValues(alpha: 0.7),
-                        fontStyle: FontStyle.italic,
+                  const SizedBox(height: 20),
+                  Text(
+                    'Select Image Source',
+                    style: GoogleFonts.poppins(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: textColor,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    'Choose how to capture your banana image',
+                    style: GoogleFonts.poppins(
+                      fontSize: 13,
+                      color: subtextColor,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  _SourceOption(
+                    icon: Icons.camera_alt_rounded,
+                    label: 'Take Photo',
+                    subtitle: 'Use camera to capture',
+                    onTap: () => Navigator.pop(ctx, ImageSource.camera),
+                    isDark: isDark,
+                  ),
+                  const SizedBox(height: 12),
+                  _SourceOption(
+                    icon: Icons.photo_library_rounded,
+                    label: 'Choose from Gallery',
+                    subtitle: 'Select existing photo',
+                    onTap: () => Navigator.pop(ctx, ImageSource.gallery),
+                    isDark: isDark,
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Divider(
+                          color: subtextColor.withValues(alpha: 0.18),
+                          thickness: 1,
+                        ),
                       ),
-                    ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Text(
+                          'or try Realtime feature',
+                          style: GoogleFonts.poppins(
+                            fontSize: 11,
+                            color: subtextColor.withValues(alpha: 0.7),
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Divider(
+                          color: subtextColor.withValues(alpha: 0.18),
+                          thickness: 1,
+                        ),
+                      ),
+                    ],
                   ),
-                  Expanded(
-                    child: Divider(
-                      color: subtextColor.withValues(alpha: 0.18),
-                      thickness: 1,
-                    ),
+                  const SizedBox(height: 16),
+                  _LiveDetectionButton(
+                    onTap: () {
+                      Navigator.pop(ctx);
+                      Navigator.pushNamed(
+                        context,
+                        AppRouter.realtimeClassification,
+                      );
+                    },
                   ),
+                  const SizedBox(height: 8),
                 ],
               ),
-              const SizedBox(height: 16),
-              _LiveDetectionButton(
-                onTap: () {
-                  Navigator.pop(ctx);
-                  Navigator.pushNamed(
-                    context,
-                    AppRouter.realtimeClassification,
-                  );
-                },
-              ),
-              const SizedBox(height: 8),
-            ],
+            ),
           ),
         ),
       ),

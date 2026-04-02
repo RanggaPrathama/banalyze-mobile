@@ -89,44 +89,69 @@ class _PaginatedListViewState<T> extends State<PaginatedListView<T>> {
 
     // Initial loading
     if (widget.isLoading && widget.items.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
+      return CustomScrollView(
+        physics: const NeverScrollableScrollPhysics(),
+        slivers: [
+          if (widget.headerSlivers != null) ...widget.headerSlivers!,
+          const SliverFillRemaining(
+            child: Center(child: CircularProgressIndicator()),
+          ),
+        ],
+      );
     }
 
     // Error with no data
     if (widget.error != null && widget.items.isEmpty) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.wifi_off_rounded, size: 64, color: hintColor),
-              const SizedBox(height: 16),
-              Text(
-                'Failed to load',
-                style: GoogleFonts.poppins(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: subtextColor,
+      return RefreshIndicator(
+        onRefresh: widget.onRefresh,
+        color: AppColors.primary,
+        child: CustomScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            if (widget.headerSlivers != null) ...widget.headerSlivers!,
+            SliverFillRemaining(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(32),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.wifi_off_rounded, size: 64, color: hintColor),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Failed to load',
+                        style: GoogleFonts.poppins(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: subtextColor,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        widget.error!,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.poppins(
+                          fontSize: 13,
+                          color: hintColor,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      TextButton.icon(
+                        onPressed: widget.onRefresh,
+                        icon: const Icon(Icons.refresh_rounded),
+                        label: Text(
+                          'Retry',
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                widget.error!,
-                textAlign: TextAlign.center,
-                style: GoogleFonts.poppins(fontSize: 13, color: hintColor),
-              ),
-              const SizedBox(height: 20),
-              TextButton.icon(
-                onPressed: widget.onRefresh,
-                icon: const Icon(Icons.refresh_rounded),
-                label: Text(
-                  'Retry',
-                  style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       );
     }
@@ -139,6 +164,7 @@ class _PaginatedListViewState<T> extends State<PaginatedListView<T>> {
         child: CustomScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
+            if (widget.headerSlivers != null) ...widget.headerSlivers!,
             SliverFillRemaining(
               child: Center(
                 child: Column(
@@ -175,29 +201,39 @@ class _PaginatedListViewState<T> extends State<PaginatedListView<T>> {
     return RefreshIndicator(
       onRefresh: widget.onRefresh,
       color: AppColors.primary,
-      child: ListView.builder(
+      child: CustomScrollView(
         controller: _scrollController,
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: widget.padding ?? const EdgeInsets.fromLTRB(20, 0, 20, 100),
-        itemCount: widget.items.length + (widget.hasMore ? 1 : 0),
-        itemBuilder: (context, index) {
-          if (index >= widget.items.length) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 24),
-              child: Center(
-                child: SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2.5,
-                    color: isDark ? AppColors.darkTextHint : AppColors.primary,
-                  ),
-                ),
-              ),
-            );
-          }
-          return widget.itemBuilder(context, widget.items[index], index);
-        },
+        slivers: [
+          if (widget.headerSlivers != null) ...widget.headerSlivers!,
+          SliverPadding(
+            padding:
+                widget.padding ?? const EdgeInsets.fromLTRB(20, 0, 20, 100),
+            sliver: SliverList.builder(
+              itemCount: widget.items.length + (widget.hasMore ? 1 : 0),
+              itemBuilder: (context, index) {
+                if (index >= widget.items.length) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 24),
+                    child: Center(
+                      child: SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.5,
+                          color: isDark
+                              ? AppColors.darkTextHint
+                              : AppColors.primary,
+                        ),
+                      ),
+                    ),
+                  );
+                }
+                return widget.itemBuilder(context, widget.items[index], index);
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

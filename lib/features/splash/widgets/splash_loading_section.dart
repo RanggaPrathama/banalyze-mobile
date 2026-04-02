@@ -16,6 +16,7 @@ class SplashLoadingSection extends StatelessWidget {
       builder: (context, _) {
         final percent = (progressAnimation.value * 100).toInt();
         final provider = context.watch<SplashProvider>();
+        final isDark = Theme.of(context).brightness == Brightness.dark;
 
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 40),
@@ -29,7 +30,7 @@ class SplashLoadingSection extends StatelessWidget {
                   style: GoogleFonts.poppins(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
-                    color: AppColors.textPrimary,
+                    color: isDark ? Colors.white : AppColors.textPrimary,
                   ),
                 ),
               ),
@@ -42,7 +43,9 @@ class SplashLoadingSection extends StatelessWidget {
                     style: GoogleFonts.poppins(
                       fontSize: 11,
                       fontWeight: FontWeight.w500,
-                      color: AppColors.textHint,
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.6)
+                          : AppColors.textHint,
                       letterSpacing: 1,
                     ),
                   ),
@@ -83,7 +86,9 @@ class SplashLoadingSection extends StatelessWidget {
                 style: GoogleFonts.poppins(
                   fontSize: 11,
                   fontWeight: FontWeight.w400,
-                  color: AppColors.textHint,
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.6)
+                      : AppColors.textHint,
                 ),
               ),
             ],

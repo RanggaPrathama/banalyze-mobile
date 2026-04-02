@@ -58,183 +58,176 @@ class _HistoryBody extends StatelessWidget {
         ),
         child: SafeArea(
           bottom: false,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                child: Row(
+          child: PaginatedListView<MapEntry<int, ScanHistory>>(
+            items: _buildFlatList(provider),
+            isLoading: provider.isLoading,
+            isLoadingMore: provider.isLoadingMore,
+            hasMore: provider.hasMore,
+            error: provider.error,
+            onLoadMore: () => provider.loadMore(),
+            onRefresh: () => provider.refresh(),
+            emptyIcon: Icons.history_rounded,
+            emptyTitle: 'No scan history yet',
+            emptySubtitle: 'Your classification results will appear here',
+            headerSlivers: [
+              // Header + Summary + Search
+              SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Scan History',
-                      style: GoogleFonts.poppins(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w800,
-                        color: textColor,
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                      child: Text(
+                        'Scan History',
+                        style: GoogleFonts.poppins(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w800,
+                          color: textColor,
+                        ),
                       ),
                     ),
-                    // const Spacer(),
-                    // Icon(
-                    //   Icons.settings_outlined,
-                    //   color: subtextColor,
-                    //   size: 22,
-                    // ),
+                    const SizedBox(height: 14),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 10,
+                      ),
+                      child: ScanSummaryCard(
+                        ripeCount: provider.ripeCount,
+                        partiallyRipeCount: provider.partiallyRipeCount,
+                        overripeUnripeCount: provider.overripeUnripeCount,
+                        totalCount: provider.thisWeekTotal,
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: TextField(
+                        onChanged: provider.updateSearch,
+                        style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          color: textColor,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: 'Search by date or ripeness...',
+                          hintStyle: GoogleFonts.poppins(
+                            fontSize: 13,
+                            color: hintColor,
+                          ),
+                          prefixIcon: Icon(
+                            Icons.search_rounded,
+                            color: hintColor,
+                          ),
+                          filled: true,
+                          fillColor: cardColor,
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: BorderSide(color: borderColor),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: const BorderSide(
+                              color: AppColors.primary,
+                              width: 1.5,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 14),
                   ],
                 ),
               ),
-              const SizedBox(height: 14),
-
-              // Scan Summary
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 10,
-                ),
-                child: ScanSummaryCard(
-                  ripeCount: provider.ripeCount,
-                  partiallyRipeCount: provider.partiallyRipeCount,
-                  overripeUnripeCount: provider.overripeUnripeCount,
-                  totalCount: provider.thisWeekTotal,
-                ),
-              ),
-              const SizedBox(height: 14),
-
-              // Search bar
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: TextField(
-                  onChanged: provider.updateSearch,
-                  style: GoogleFonts.poppins(fontSize: 14, color: textColor),
-                  decoration: InputDecoration(
-                    hintText: 'Search by date or ripeness...',
-                    hintStyle: GoogleFonts.poppins(
-                      fontSize: 13,
-                      color: hintColor,
-                    ),
-                    prefixIcon: Icon(Icons.search_rounded, color: hintColor),
-                    filled: true,
-                    fillColor: cardColor,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 12),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: BorderSide.none,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: BorderSide(color: borderColor),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(
-                        color: AppColors.primary,
-                        width: 1.5,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 14),
-
-              // Filter chips
-              SizedBox(
-                height: 38,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  itemCount: provider.filters.length,
-                  separatorBuilder: (_, __) => const SizedBox(width: 8),
-                  itemBuilder: (context, index) {
-                    final f = provider.filters[index];
-                    final selected = provider.selectedFilter == f;
-                    final chipBg = isDark ? AppColors.darkCard : Colors.white;
-                    final chipBorder = isDark
-                        ? AppColors.darkBorder
-                        : Colors.grey.shade300;
-
-                    return GestureDetector(
-                      onTap: () => provider.selectFilter(f),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: selected ? AppColors.primary : chipBg,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: selected ? AppColors.primary : chipBorder,
+              // Filter chips (horizontal scroll)
+              SliverToBoxAdapter(
+                child: SizedBox(
+                  height: 38,
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    itemCount: provider.filters.length,
+                    separatorBuilder: (_, __) => const SizedBox(width: 8),
+                    itemBuilder: (context, index) {
+                      final f = provider.filters[index];
+                      final selected = provider.selectedFilter == f;
+                      final chipBg = isDark ? AppColors.darkCard : Colors.white;
+                      final chipBorder = isDark
+                          ? AppColors.darkBorder
+                          : Colors.grey.shade300;
+                      return GestureDetector(
+                        onTap: () => provider.selectFilter(f),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
                           ),
-                        ),
-                        child: Text(
-                          f,
-                          style: GoogleFonts.poppins(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: selected
-                                ? AppColors.accent
-                                : (isDark
-                                      ? AppColors.darkTextSecondary
-                                      : Colors.grey.shade600),
+                          decoration: BoxDecoration(
+                            color: selected ? AppColors.primary : chipBg,
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: selected ? AppColors.primary : chipBorder,
+                            ),
                           ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // Scan list with infinite scroll + pull-to-refresh
-              Expanded(
-                child: PaginatedListView<MapEntry<int, ScanHistory>>(
-                  items: _buildFlatList(provider),
-                  isLoading: provider.isLoading,
-                  isLoadingMore: provider.isLoadingMore,
-                  hasMore: provider.hasMore,
-                  error: provider.error,
-                  onLoadMore: () => provider.loadMore(),
-                  onRefresh: () => provider.refresh(),
-                  emptyIcon: Icons.history_rounded,
-                  emptyTitle: 'No scan history yet',
-                  emptySubtitle: 'Your classification results will appear here',
-                  itemBuilder: (context, entry, _) {
-                    // entry.key == -1 means it's a section header (date label stored in title)
-                    final scan = entry.value;
-                    if (entry.key == -1) {
-                      return Padding(
-                        padding: const EdgeInsets.only(top: 8, bottom: 10),
-                        child: Text(
-                          scan.title,
-                          style: GoogleFonts.poppins(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            color: hintColor,
-                            letterSpacing: 1,
+                          child: Text(
+                            f,
+                            style: GoogleFonts.poppins(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: selected
+                                  ? AppColors.accent
+                                  : (isDark
+                                        ? AppColors.darkTextSecondary
+                                        : Colors.grey.shade600),
+                            ),
                           ),
                         ),
                       );
-                    }
-                    return ScanHistoryTile(
-                      scan: scan,
-                      isDark: isDark,
-                      textColor: textColor,
-                      subtextColor: subtextColor,
-                      cardColor: cardColor,
-                      borderColor: borderColor,
-                      onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          '/scan-detail',
-                          arguments: scan.id,
-                        );
-                      },
-                    );
-                  },
+                    },
+                  ),
                 ),
               ),
+              const SliverToBoxAdapter(child: SizedBox(height: 16)),
             ],
+            itemBuilder: (context, entry, _) {
+              final scan = entry.value;
+              if (entry.key == -1) {
+                return Padding(
+                  padding: const EdgeInsets.only(top: 8, bottom: 10),
+                  child: Text(
+                    scan.title,
+                    style: GoogleFonts.poppins(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: hintColor,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                );
+              }
+              return ScanHistoryTile(
+                scan: scan,
+                isDark: isDark,
+                textColor: textColor,
+                subtextColor: subtextColor,
+                cardColor: cardColor,
+                borderColor: borderColor,
+                onTap: () {
+                  Navigator.pushNamed(
+                    context,
+                    '/scan-detail',
+                    arguments: scan.id,
+                  );
+                },
+              );
+            },
           ),
         ),
       ),
