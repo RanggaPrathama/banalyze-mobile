@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -11,6 +12,7 @@ import 'package:banalyze/features/history/pages/history_page.dart';
 import 'package:banalyze/features/article/pages/article_list_page.dart';
 import 'package:banalyze/features/profile/pages/profile_page.dart';
 import 'package:banalyze/router/app_router.dart';
+import 'package:banalyze/shared/utils/image_crop_helper.dart';
 
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});
@@ -182,9 +184,27 @@ class _MainNavigationState extends State<MainNavigation> {
         maxHeight: 1024,
         imageQuality: 85,
       );
-      if (picked != null && mounted) {
-        Navigator.of(context).pushNamed(AppRouter.scan, arguments: picked.path);
+      if (picked == null || !mounted) return;
+
+      File finalImage = File(picked.path);
+
+      if (source == ImageSource.gallery) {
+        // Gallery: interactive crop UI so user selects the banana area
+        final cropped = await cropImageInteractive(
+          finalImage,
+          context: context,
+        );
+        if (cropped == null || !mounted) return;
+        finalImage = cropped;
+      } else {
+        // Camera: auto center-crop to square (focus on center object)
+        finalImage = await centerCropSquare(finalImage);
+        if (!mounted) return;
       }
+
+      Navigator.of(
+        context,
+      ).pushNamed(AppRouter.scan, arguments: finalImage.path);
     } catch (_) {
       // User cancelled or permission denied — stay on main
     }

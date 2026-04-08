@@ -17,6 +17,7 @@ class RealtimeClassificationProvider extends ChangeNotifier {
 
   CameraController? _controller;
   ClassificationResult? _currentResult;
+  ClassificationResult? _stableResult;
   bool _isInitialized = false;
   bool _isProcessing = false;
   bool _disposed = false;
@@ -29,8 +30,19 @@ class RealtimeClassificationProvider extends ChangeNotifier {
   String? _error;
   int _lastInferenceMs = 0;
 
-  /// Minimum confidence (0–100) to display a meaningful class label.
-  static const int threshold = 70;
+  // ── Temporal Smoothing Buffer ───────────────────────────────────────────────
+  /// Stores the last [_bufferSize] raw inference results.
+  final List<ClassificationResult> _buffer = [];
+
+  /// How many frames to keep in the sliding window.
+  static const int _bufferSize = 5;
+
+  /// Minimum frames in the buffer that must agree on the same label
+  /// (AND each above [threshold]) before we show a confirmed class.
+  static const int _minConsensus = 4;
+
+  /// Minimum confidence (0–100) per individual frame to enter the buffer.
+  static const int threshold = 75;
 
   /// Minimum gap between consecutive inferences (ms).
   static const int _inferenceIntervalMs = 900;
@@ -43,16 +55,19 @@ class RealtimeClassificationProvider extends ChangeNotifier {
   bool get isInitialized => _isInitialized;
   String? get error => _error;
 
+  /// Confidence from the stable (buffered) result — 0 if not yet confirmed.
   int get confidencePercent =>
-      _currentResult == null ? 0 : (_currentResult!.confidence * 100).round();
+      _stableResult == null ? 0 : (_stableResult!.confidence * 100).round();
 
-  bool get isBelowThreshold =>
-      _currentResult == null || confidencePercent < threshold;
+  /// True while the buffer hasn't reached consensus yet.
+  bool get isBelowThreshold => _stableResult == null;
+
+  /// True while the buffer is still warming up (< [_bufferSize] frames seen).
+  bool get isBuffering => _buffer.length < _bufferSize;
 
   String get detectedClass {
-    if (_currentResult == null) return '—';
-    if (isBelowThreshold) return 'Undefined';
-    switch (_currentResult!.label) {
+    if (_stableResult == null) return isBuffering ? 'Scanning...' : '—';
+    switch (_stableResult!.label) {
       case 'matang':
         return 'Ripe';
       case 'setengah_matang':
@@ -60,7 +75,7 @@ class RealtimeClassificationProvider extends ChangeNotifier {
       case 'terlalu_matang':
         return 'Overripe';
       default:
-        return _currentResult!.label;
+        return _stableResult!.label;
     }
   }
 
@@ -182,6 +197,51 @@ class RealtimeClassificationProvider extends ChangeNotifier {
       final converted = _convertCameraImage(frame);
       if (converted == null || _disposed) return;
       _currentResult = _repository.classifyImage(converted);
+
+      // ── Temporal smoothing ──────────────────────────────────────────────
+      _buffer.add(_currentResult!);
+      if (_buffer.length > _bufferSize) _buffer.removeAt(0);
+
+      if (_buffer.length >= _bufferSize) {
+        // Count how many frames per label are above the per-frame threshold.
+        final counts = <String, int>{};
+        for (final r in _buffer) {
+          if ((r.confidence * 100).round() >= threshold) {
+            counts[r.label] = (counts[r.label] ?? 0) + 1;
+          }
+        }
+
+        // Find the dominant label.
+        String? topLabel;
+        int topCount = 0;
+        for (final e in counts.entries) {
+          if (e.value > topCount) {
+            topCount = e.value;
+            topLabel = e.key;
+          }
+        }
+
+        if (topLabel != null && topCount >= _minConsensus) {
+          // Stable: average confidence of the agreeing frames.
+          final agreeing = _buffer.where((r) => r.label == topLabel).toList();
+          final avgConf =
+              agreeing.map((r) => r.confidence).reduce((a, b) => a + b) /
+              agreeing.length;
+          _stableResult = ClassificationResult(
+            label: topLabel,
+            confidence: avgConf,
+            allProbabilities: _buffer.last.allProbabilities,
+          );
+        } else {
+          // No consensus — clear the stable result.
+          _stableResult = null;
+        }
+      } else {
+        // Buffer still warming up.
+        _stableResult = null;
+      }
+      // ───────────────────────────────────────────────────────────────────
+
       _safeNotify();
     } catch (e) {
       debugPrint('Realtime inference error: $e');
@@ -292,7 +352,12 @@ class RealtimeClassificationProvider extends ChangeNotifier {
 
   /// Restarts the image stream after returning from the result page.
   void resumeInference() {
-    if (!_disposed && _isInitialized) _startImageStream();
+    if (!_disposed && _isInitialized) {
+      // Clear buffer so old frames don't contaminate the new session.
+      _buffer.clear();
+      _stableResult = null;
+      _startImageStream();
+    }
   }
 
   // ── Helpers ────────────────────────────────────────────────────────────────

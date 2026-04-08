@@ -10,6 +10,10 @@ enum ClassificationStatus { idle, loading, success, error }
 class ClassificationProvider extends ChangeNotifier {
   final ClassificationRepository _repository;
 
+  /// Minimum confidence percentage (0–100) to consider a result valid.
+  /// Raise this to reduce false positives from non-banana objects.
+  static const int threshold = 75;
+
   ClassificationProvider(this._repository);
 
   ClassificationStatus _status = ClassificationStatus.idle;
@@ -101,7 +105,7 @@ class ClassificationProvider extends ChangeNotifier {
   /// Map model label to user-facing ripeness string.
   String get ripenessLabel {
     if (_result == null) return '';
-    if (confidencePercent < 70) return 'Unrecognized';
+    if (confidencePercent < threshold) return 'Unrecognized';
 
     switch (_result!.label) {
       case 'matang':
@@ -137,7 +141,7 @@ class ClassificationProvider extends ChangeNotifier {
 
   /// Human-readable description based on ripeness.
   String get ripenessDescription {
-    if (confidencePercent < 70) {
+    if (confidencePercent < threshold) {
       return 'The object in the image is either not a banana or the image quality is too low for a confident prediction. Please try scanning again with better lighting and a clearer view of the banana.';
     }
 
@@ -155,7 +159,7 @@ class ClassificationProvider extends ChangeNotifier {
 
   /// Detected attributes based on ripeness.
   List<String> get detectedAttributes {
-    if (confidencePercent < 70) {
+    if (confidencePercent < threshold) {
       return ['Unrecognized', 'Low Quality', 'Try Again'];
     }
 

@@ -7,6 +7,7 @@ import 'package:banalyze/core/constants/app_colors.dart';
 import 'package:banalyze/router/app_router.dart';
 import 'package:banalyze/features/classifications/providers/classification_provider.dart';
 import 'package:banalyze/shared/widgets/app_snackbar.dart';
+import 'package:banalyze/shared/utils/image_crop_helper.dart';
 
 class ImageReviewPage extends StatefulWidget {
   final String imagePath;
@@ -95,7 +96,40 @@ class _ImageReviewPageState extends State<ImageReviewPage> {
     );
 
     if (source == null || !mounted) return;
-    await provider.pickImage(source);
+
+    final picked = await provider.pickImage(source);
+    if (!picked || !mounted) return;
+
+    final currentImage = provider.selectedImage;
+    if (currentImage == null) return;
+
+    if (source == ImageSource.gallery) {
+      // Gallery: interactive crop
+      final cropped = await cropImageInteractive(
+        currentImage,
+        context: context,
+      );
+      if (cropped != null && mounted) {
+        provider.setImage(cropped);
+      }
+    } else {
+      // Camera: auto center-crop
+      final cropped = await centerCropSquare(currentImage);
+      if (mounted) {
+        provider.setImage(cropped);
+      }
+    }
+  }
+
+  Future<void> _cropCurrentImage() async {
+    final provider = context.read<ClassificationProvider>();
+    final currentImage = provider.selectedImage;
+    if (currentImage == null) return;
+
+    final cropped = await cropImageInteractive(currentImage, context: context);
+    if (cropped != null && mounted) {
+      provider.setImage(cropped);
+    }
   }
 
   Future<void> _classifyImage() async {
@@ -290,28 +324,56 @@ class _ImageReviewPageState extends State<ImageReviewPage> {
                     ),
                     const SizedBox(height: 12),
 
-                    // Retake button
-                    GestureDetector(
-                      onTap: isClassifying ? null : _retakeImage,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.refresh_rounded,
-                            size: 18,
-                            color: subtextColor,
+                    // Crop & Retake buttons
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        GestureDetector(
+                          onTap: isClassifying ? null : _cropCurrentImage,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.crop_rounded,
+                                size: 18,
+                                color: subtextColor,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                'Crop',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: subtextColor,
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 6),
-                          Text(
-                            'Retake',
-                            style: GoogleFonts.poppins(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: subtextColor,
-                            ),
+                        ),
+                        const SizedBox(width: 32),
+                        GestureDetector(
+                          onTap: isClassifying ? null : _retakeImage,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.refresh_rounded,
+                                size: 18,
+                                color: subtextColor,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                'Retake',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: subtextColor,
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

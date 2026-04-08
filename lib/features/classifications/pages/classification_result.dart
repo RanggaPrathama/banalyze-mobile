@@ -145,7 +145,7 @@ class _ClassificationResultPageState extends State<ClassificationResultPage> {
                     const SizedBox(height: 24),
 
                     // Ripeness timeline (Hide if unrecognized)
-                    if (confidence >= 70) ...[
+                    if (confidence >= ClassificationProvider.threshold) ...[
                       _RipenessTimeline(
                         current: ripeness,
                         isDark: isDark,
@@ -205,7 +205,7 @@ class _ClassificationResultPageState extends State<ClassificationResultPage> {
                       ),
                     ),
                   ),
-                  if (confidence >= 70) ...[
+                  if (confidence >= ClassificationProvider.threshold) ...[
                     const SizedBox(width: 12),
                     Expanded(
                       child: SizedBox(
@@ -319,7 +319,7 @@ class _StatusSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isLowConfidence = confidence < 70;
+    final bool isLowConfidence = confidence < ClassificationProvider.threshold;
     final displayColor = isLowConfidence ? AppColors.error : ripeness.color;
     final displayLabel = isLowConfidence ? 'Unrecognized' : ripeness.label;
     final displayAdvice = isLowConfidence
