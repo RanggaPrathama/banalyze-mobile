@@ -103,10 +103,13 @@ class ProfilePage extends StatelessWidget {
                                 height: 100,
                               ),
                             )
-                          : Icon(
-                              Icons.person_rounded,
-                              size: 48,
-                              color: subtextColor,
+                          : ClipOval(
+                              child: Image.asset(
+                                'assets/images/default_avatar.png',
+                                fit: BoxFit.cover,
+                                width: 100,
+                                height: 100,
+                              ),
                             ),
                     ),
                   ),

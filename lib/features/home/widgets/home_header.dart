@@ -46,7 +46,12 @@ class HomeHeader extends StatelessWidget {
                     image: CachedNetworkImageProvider(user!.avatarUrl!),
                     fit: BoxFit.cover,
                   )
-                : null,
+                : DecorationImage(
+                    image: Image.asset(
+                      'assets/images/default_avatar.png',
+                    ).image,
+                    fit: BoxFit.cover,
+                  ),
           ),
         ),
         const SizedBox(width: 12),

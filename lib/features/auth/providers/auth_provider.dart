@@ -226,10 +226,12 @@ class AuthProvider extends ChangeNotifier {
         if (refreshToken != null) {
           await prefs.setString('refresh_token', refreshToken);
         }
-        if (data['user'] != null) {
-          _user = UserModel.fromMap(data['user'] as Map<String, dynamic>);
-          await prefs.setString('user', _user!.toJson());
-        }
+        _user = UserModel.fromMap({
+          'id': data['id'],
+          'nama_user': data['nama_user'],
+          'email': data['email'],
+        });
+        await prefs.setString('user', _user!.toJson());
 
         _isLoggedIn = true;
         return true;
