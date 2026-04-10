@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:banalyze/core/constants/app_colors.dart';
+import 'package:banalyze/core/version_checker.dart';
 import 'package:banalyze/core/theme/theme_provider.dart';
 import 'package:banalyze/shared/widgets/app_snackbar.dart';
 import 'package:banalyze/features/auth/providers/auth_provider.dart';
@@ -11,8 +12,26 @@ import 'package:banalyze/features/profile/widgets/profile_menu_tile.dart';
 import 'package:banalyze/features/profile/widgets/profile_section_label.dart';
 import 'package:banalyze/features/profile/widgets/profile_stat_card.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  String _appVersion = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _initVersion();
+  }
+
+  Future<void> _initVersion() async {
+    final version = await VersionChecker.getCurrentVersion();
+    if (mounted) setState(() => _appVersion = version);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -378,6 +397,17 @@ class ProfilePage extends StatelessWidget {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 16),
+                  // App version
+                  Text(
+                    _appVersion.isNotEmpty ? 'v$_appVersion' : '',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.poppins(
+                      fontSize: 12,
+                      color: subtextColor,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
                 ],
               ),
             ),

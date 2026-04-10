@@ -10,6 +10,7 @@ import 'package:banalyze/core/network/network_checker.dart';
 
 /// Endpoints that must NOT trigger the refresh-token logic.
 const _authEndpoints = ['/auth/login', '/auth/register'];
+const networkTimeout = Duration(seconds: 15);
 
 bool _isAuthEndpoint(String path) =>
     _authEndpoints.any((ep) => path.contains(ep));
@@ -22,6 +23,7 @@ Future<void> _performLogout() async {
   final prefs = await SharedPreferences.getInstance();
   await prefs.remove('access_token');
   await prefs.remove('refresh_token');
+  await prefs.remove('user');
 
   FocusManager.instance.primaryFocus?.unfocus();
   navigatorKey.currentState?.pushNamedAndRemoveUntil(
@@ -72,9 +74,9 @@ Future<void> _onRequest(
     options.headers['Authorization'] = 'Bearer $token';
   }
 
-  // ── Slow-network warning timer (fires after 10 s) ───────────────────────
+  // ── Slow-network warning timer (fires after networkTimeout) ───────────────────────
   final key = options.hashCode;
-  _slowNetworkTimers[key] = Timer(const Duration(seconds: 10), () {
+  _slowNetworkTimers[key] = Timer(networkTimeout, () {
     AppSnackBar.warning('Koneksi lambat, harap tunggu sebentar...');
   });
 
@@ -150,8 +152,8 @@ Future<void> _onError(
       final tempDio = Dio(
         BaseOptions(
           baseUrl: AppUrl.apiBaseUrl,
-          connectTimeout: const Duration(seconds: 10),
-          receiveTimeout: const Duration(seconds: 10),
+          connectTimeout: networkTimeout,
+          receiveTimeout: networkTimeout,
         ),
       );
       final refreshResponse = await tempDio.post(

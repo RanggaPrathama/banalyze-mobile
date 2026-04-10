@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:banalyze/core/constants/app_colors.dart';
 import 'package:banalyze/core/constants/app_strings.dart';
+import 'package:banalyze/core/version_checker.dart';
 import 'package:banalyze/features/history/providers/history_provider.dart';
 import 'package:banalyze/features/profile/providers/profile_provider.dart';
 import 'package:banalyze/features/home/pages/home_page.dart';
@@ -30,6 +31,9 @@ class _MainNavigationState extends State<MainNavigation> {
   void initState() {
     super.initState();
     _historyProvider = HistoryProvider()..loadInitial();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) VersionChecker.checkAndShowUpdateDialog(context);
+    });
   }
 
   @override
