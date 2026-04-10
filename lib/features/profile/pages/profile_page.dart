@@ -55,7 +55,7 @@ class ProfilePage extends StatelessWidget {
             onRefresh: () => context.read<ProfileProvider>().loadStats(),
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 90),
               child: Column(
                 children: [
                   // Top bar
@@ -72,25 +72,25 @@ class ProfilePage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 16),
 
                   // Avatar
                   Container(
-                    width: 100,
-                    height: 100,
+                    width: 84,
+                    height: 84,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.primary, width: 3),
+                      border: Border.all(color: AppColors.primary, width: 2.5),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.primary.withValues(alpha: 0.25),
-                          blurRadius: 16,
-                          offset: const Offset(0, 4),
+                          color: AppColors.primary.withValues(alpha: 0.2),
+                          blurRadius: 12,
+                          offset: const Offset(0, 3),
                         ),
                       ],
                     ),
                     child: CircleAvatar(
-                      radius: 47,
+                      radius: 39,
                       backgroundColor: isDark
                           ? AppColors.darkSurface
                           : Colors.grey.shade200,
@@ -99,25 +99,25 @@ class ProfilePage extends StatelessWidget {
                               child: CachedNetworkImage(
                                 imageUrl: user!.avatarUrl!,
                                 fit: BoxFit.cover,
-                                width: 100,
-                                height: 100,
+                                width: 84,
+                                height: 84,
                               ),
                             )
                           : ClipOval(
                               child: Image.asset(
                                 'assets/images/default_avatar.png',
                                 fit: BoxFit.cover,
-                                width: 100,
-                                height: 100,
+                                width: 84,
+                                height: 84,
                               ),
                             ),
                     ),
                   ),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 10),
                   Text(
                     user?.name ?? 'Banana Scout',
                     style: GoogleFonts.poppins(
-                      fontSize: 20,
+                      fontSize: 17,
                       fontWeight: FontWeight.w700,
                       color: textColor,
                     ),
@@ -142,7 +142,7 @@ class ProfilePage extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          'EXPERT SORTER',
+                          'USER TERVERIFIKASI',
                           style: GoogleFonts.poppins(
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
@@ -153,7 +153,7 @@ class ProfilePage extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 16),
 
                   // Stats row
                   Row(
@@ -181,7 +181,7 @@ class ProfilePage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 20),
 
                   // Preferences section
                   ProfileSectionLabel(
@@ -223,8 +223,8 @@ class ProfilePage extends StatelessWidget {
                   Container(
                     margin: const EdgeInsets.only(bottom: 8),
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 6,
+                      horizontal: 14,
+                      vertical: 2,
                     ),
                     decoration: BoxDecoration(
                       color: cardColor,
@@ -234,26 +234,26 @@ class ProfilePage extends StatelessWidget {
                     child: Row(
                       children: [
                         Container(
-                          width: 36,
-                          height: 36,
+                          width: 32,
+                          height: 32,
                           decoration: BoxDecoration(
                             color: AppColors.primary.withValues(alpha: 0.12),
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(9),
                           ),
                           child: Icon(
                             isDark
                                 ? Icons.dark_mode_rounded
                                 : Icons.light_mode_rounded,
-                            size: 18,
+                            size: 16,
                             color: AppColors.primary,
                           ),
                         ),
-                        const SizedBox(width: 14),
+                        const SizedBox(width: 12),
                         Expanded(
                           child: Text(
                             'Dark Mode',
                             style: GoogleFonts.poppins(
-                              fontSize: 14,
+                              fontSize: 13,
                               fontWeight: FontWeight.w500,
                               color: textColor,
                             ),
@@ -267,7 +267,7 @@ class ProfilePage extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 16),
 
                   // Support section
                   ProfileSectionLabel(label: 'SUPPORT', color: subtextColor),
@@ -280,7 +280,7 @@ class ProfilePage extends StatelessWidget {
                     borderColor: borderColor,
                     onTap: () => Navigator.pushNamed(context, '/about-app'),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 8),
                   ProfileMenuTile(
                     icon: Icons.help_outline_rounded,
                     label: 'Help Center',
@@ -289,16 +289,74 @@ class ProfilePage extends StatelessWidget {
                     borderColor: borderColor,
                     onTap: () => Navigator.pushNamed(context, '/help-center'),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 16),
                   // Logout
                   SizedBox(
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton.icon(
-                      onPressed: () {
-                        context.read<AuthProvider>().logout();
-                        Navigator.pushReplacementNamed(context, '/login');
-                        AppSnackBar.info('You have been logged out.');
+                      onPressed: () async {
+                        final confirmed = await showDialog<bool>(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            backgroundColor: isDark
+                                ? AppColors.darkCard
+                                : Colors.white,
+                            title: Text(
+                              'Keluar Aplikasi?',
+                              style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 16,
+                                color: textColor,
+                              ),
+                            ),
+                            content: Text(
+                              'Kamu akan keluar dari akun ini. Yakin ingin melanjutkan?',
+                              style: GoogleFonts.poppins(
+                                fontSize: 13,
+                                color: subtextColor,
+                              ),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(ctx, false),
+                                child: Text(
+                                  'Batal',
+                                  style: GoogleFonts.poppins(
+                                    fontWeight: FontWeight.w500,
+                                    color: subtextColor,
+                                  ),
+                                ),
+                              ),
+                              ElevatedButton(
+                                onPressed: () => Navigator.pop(ctx, true),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red.shade600,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  elevation: 0,
+                                ),
+                                child: Text(
+                                  'Ya, Keluar',
+                                  style: GoogleFonts.poppins(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                        if (confirmed == true && context.mounted) {
+                          context.read<AuthProvider>().logout();
+                          Navigator.pushReplacementNamed(context, '/login');
+                          AppSnackBar.info('You have been logged out.');
+                        }
                       },
                       icon: const Icon(Icons.logout_rounded, size: 20),
                       label: Text(

@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:banalyze/app.dart';
 import 'package:banalyze/router/app_router.dart';
 import 'package:banalyze/shared/widgets/app_snackbar.dart';
-import 'package:banalyze/core/constants/api_url.dart';
+import 'package:banalyze/core/constants/app_url.dart';
 import 'package:banalyze/core/network/network_checker.dart';
 
 /// Endpoints that must NOT trigger the refresh-token logic.
@@ -137,8 +137,23 @@ Future<void> _onError(
       return handler.reject(e);
     }
 
+    // Check network before attempting refresh — avoid false logouts
+    final onlineBeforeRefresh = await NetworkChecker.hasConnection();
+    if (!onlineBeforeRefresh) {
+      AppSnackBar.error(
+        'Tidak ada koneksi internet. Periksa WiFi atau data seluler Anda.',
+      );
+      return handler.next(e);
+    }
+
     try {
-      final tempDio = Dio(BaseOptions(baseUrl: AppUrl.apiBaseUrl));
+      final tempDio = Dio(
+        BaseOptions(
+          baseUrl: AppUrl.apiBaseUrl,
+          connectTimeout: const Duration(seconds: 10),
+          receiveTimeout: const Duration(seconds: 10),
+        ),
+      );
       final refreshResponse = await tempDio.post(
         '/auth/refreshToken',
         options: Options(headers: {'Authorization': 'Bearer $refreshToken'}),
@@ -164,8 +179,34 @@ Future<void> _onError(
         return handler.reject(e);
       }
     } catch (refreshError) {
+      // If the refresh call itself timed out or lost connectivity, do NOT
+      // log the user out — the session may still be valid once connectivity
+      // is restored. Show an appropriate message and keep the error going.
+      if (refreshError is DioException) {
+        final isNetworkFailure =
+            refreshError.type == DioExceptionType.connectionTimeout ||
+            refreshError.type == DioExceptionType.receiveTimeout ||
+            refreshError.type == DioExceptionType.sendTimeout ||
+            refreshError.type == DioExceptionType.connectionError;
+
+        if (isNetworkFailure) {
+          final stillOnline = await NetworkChecker.hasConnection();
+          if (!stillOnline) {
+            AppSnackBar.error(
+              'Tidak ada koneksi internet. Periksa WiFi atau data seluler Anda.',
+            );
+          } else {
+            AppSnackBar.error(
+              'Server tidak merespons. Coba lagi dalam beberapa saat.',
+            );
+          }
+          return handler.next(e);
+        }
+
+        await _performLogout();
+        return handler.reject(refreshError);
+      }
       await _performLogout();
-      if (refreshError is DioException) return handler.reject(refreshError);
       return handler.reject(e);
     }
   }

@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:banalyze/core/network/dio_interceptor.dart';
-import './constants/api_url.dart';
+import 'constants/app_url.dart';
 
 final Dio apiClient = Dio(
   BaseOptions(

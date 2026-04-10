@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -210,83 +211,154 @@ class _MainNavigationState extends State<MainNavigation> {
     }
   }
 
+  Future<void> _showExitDialog(BuildContext context) async {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = isDark ? AppColors.darkCard : Colors.white;
+    final textColor = isDark
+        ? AppColors.darkTextPrimary
+        : AppColors.textPrimary;
+    final subtextColor = isDark
+        ? AppColors.darkTextSecondary
+        : AppColors.textSecondary;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        backgroundColor: cardColor,
+        title: Text(
+          'Keluar Aplikasi?',
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.w700,
+            fontSize: 16,
+            color: textColor,
+          ),
+        ),
+        content: Text(
+          'Apakah kamu yakin ingin keluar dari aplikasi ini?',
+          style: GoogleFonts.poppins(fontSize: 13, color: subtextColor),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(
+              'Batal',
+              style: GoogleFonts.poppins(
+                fontWeight: FontWeight.w500,
+                color: subtextColor,
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              elevation: 0,
+            ),
+            child: Text(
+              'Ya, Keluar',
+              style: GoogleFonts.poppins(
+                fontWeight: FontWeight.w600,
+                fontSize: 13,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      SystemNavigator.pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final barColor = isDark ? AppColors.darkSurface : AppColors.white;
 
-    return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: [
-          const HomePage(),
-          ChangeNotifierProvider.value(
-            value: _historyProvider,
-            child: const HistoryPage(),
-          ),
-          const ArticleListPage(),
-          const ProfilePage(),
-        ],
-      ),
-      extendBody: true,
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: _ScanButton(onTap: _onScanTapped),
-      bottomNavigationBar: BottomAppBar(
-        color: barColor,
-        shape: const CircularNotchedRectangle(),
-        notchMargin: 8.0,
-        padding: EdgeInsets.zero,
-        elevation: 16,
-        shadowColor: isDark
-            ? Colors.black.withValues(alpha: 0.3)
-            : AppColors.shadow,
-        child: SizedBox(
-          height: 70,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Expanded(
-                child: _NavItem(
-                  icon: Icons.home_outlined,
-                  activeIcon: Icons.home_rounded,
-                  label: AppStrings.navHome,
-                  isActive: _currentIndex == 0,
-                  onTap: () => _onTabTapped(0),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _showExitDialog(context);
+      },
+      child: Scaffold(
+        body: IndexedStack(
+          index: _currentIndex,
+          children: [
+            const HomePage(),
+            ChangeNotifierProvider.value(
+              value: _historyProvider,
+              child: const HistoryPage(),
+            ),
+            const ArticleListPage(),
+            const ProfilePage(),
+          ],
+        ),
+        extendBody: true,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButton: _ScanButton(onTap: _onScanTapped),
+        bottomNavigationBar: BottomAppBar(
+          color: barColor,
+          shape: const CircularNotchedRectangle(),
+          notchMargin: 8.0,
+          padding: EdgeInsets.zero,
+          elevation: 16,
+          shadowColor: isDark
+              ? Colors.black.withValues(alpha: 0.3)
+              : AppColors.shadow,
+          child: SizedBox(
+            height: 70,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Expanded(
+                  child: _NavItem(
+                    icon: Icons.home_outlined,
+                    activeIcon: Icons.home_rounded,
+                    label: AppStrings.navHome,
+                    isActive: _currentIndex == 0,
+                    onTap: () => _onTabTapped(0),
+                  ),
                 ),
-              ),
-              Expanded(
-                child: _NavItem(
-                  icon: Icons.access_time_outlined,
-                  activeIcon: Icons.access_time_filled,
-                  label: AppStrings.navHistory,
-                  isActive: _currentIndex == 1,
-                  onTap: () => _onTabTapped(1),
+                Expanded(
+                  child: _NavItem(
+                    icon: Icons.access_time_outlined,
+                    activeIcon: Icons.access_time_filled,
+                    label: AppStrings.navHistory,
+                    isActive: _currentIndex == 1,
+                    onTap: () => _onTabTapped(1),
+                  ),
                 ),
-              ),
-              const Expanded(child: SizedBox()), // Area for center FAB
-              Expanded(
-                child: _NavItem(
-                  icon: Icons.menu_book_outlined,
-                  activeIcon: Icons.menu_book_rounded,
-                  label: AppStrings.navGuide,
-                  isActive: _currentIndex == 2,
-                  onTap: () => _onTabTapped(2),
+                const Expanded(child: SizedBox()), // Area for center FAB
+                Expanded(
+                  child: _NavItem(
+                    icon: Icons.menu_book_outlined,
+                    activeIcon: Icons.menu_book_rounded,
+                    label: AppStrings.navGuide,
+                    isActive: _currentIndex == 2,
+                    onTap: () => _onTabTapped(2),
+                  ),
                 ),
-              ),
-              Expanded(
-                child: _NavItem(
-                  icon: Icons.person_outline,
-                  activeIcon: Icons.person,
-                  label: AppStrings.navProfile,
-                  isActive: _currentIndex == 3,
-                  onTap: () => _onTabTapped(3),
+                Expanded(
+                  child: _NavItem(
+                    icon: Icons.person_outline,
+                    activeIcon: Icons.person,
+                    label: AppStrings.navProfile,
+                    isActive: _currentIndex == 3,
+                    onTap: () => _onTabTapped(3),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      ), // closes Scaffold
+    ); // closes PopScope
   }
 }
 

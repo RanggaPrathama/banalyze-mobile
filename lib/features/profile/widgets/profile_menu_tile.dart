@@ -31,20 +31,20 @@ class ProfileMenuTile extends StatelessWidget {
       ),
       child: ListTile(
         onTap: onTap,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 0),
         leading: Container(
-          width: 36,
-          height: 36,
+          width: 32,
+          height: 32,
           decoration: BoxDecoration(
             color: AppColors.primary.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(9),
           ),
-          child: Icon(icon, size: 18, color: AppColors.primary),
+          child: Icon(icon, size: 16, color: AppColors.primary),
         ),
         title: Text(
           label,
           style: GoogleFonts.poppins(
-            fontSize: 14,
+            fontSize: 13,
             fontWeight: FontWeight.w500,
             color: textColor,
           ),
@@ -52,7 +52,7 @@ class ProfileMenuTile extends StatelessWidget {
         trailing: Icon(
           Icons.chevron_right_rounded,
           color: Colors.grey.shade400,
-          size: 22,
+          size: 20,
         ),
       ),
     );
