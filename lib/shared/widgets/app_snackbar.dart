@@ -163,16 +163,23 @@ class _SnackBarContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bg = _bgColor(isDark);
+    final accent = _accentColor(isDark);
+    final text = _textColor(isDark);
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: _bgColor,
+        color: bg,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: _accentColor.withValues(alpha: 0.3)),
+        border: Border.all(color: accent.withValues(alpha: isDark ? 0.3 : 0.4)),
         boxShadow: [
           BoxShadow(
-            color: _accentColor.withValues(alpha: 0.15),
-            blurRadius: 12,
+            color: isDark
+                ? Colors.black.withValues(alpha: 0.4)
+                : accent.withValues(alpha: 0.15),
+            blurRadius: 16,
             offset: const Offset(0, 4),
           ),
         ],
@@ -183,10 +190,10 @@ class _SnackBarContent extends StatelessWidget {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: _accentColor.withValues(alpha: 0.15),
+              color: accent.withValues(alpha: isDark ? 0.18 : 0.12),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(_icon, color: _accentColor, size: 20),
+            child: Icon(_icon, color: accent, size: 20),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -195,7 +202,7 @@ class _SnackBarContent extends StatelessWidget {
               style: GoogleFonts.poppins(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
-                color: _textColor,
+                color: text,
                 height: 1.3,
               ),
               maxLines: 3,
@@ -212,7 +219,7 @@ class _SnackBarContent extends StatelessWidget {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: _accentColor.withValues(alpha: 0.15),
+                  color: accent.withValues(alpha: isDark ? 0.18 : 0.12),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -220,7 +227,7 @@ class _SnackBarContent extends StatelessWidget {
                   style: GoogleFonts.poppins(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: _accentColor,
+                    color: accent,
                   ),
                 ),
               ),
@@ -231,42 +238,84 @@ class _SnackBarContent extends StatelessWidget {
     );
   }
 
-  Color get _bgColor {
-    switch (type) {
-      case SnackBarType.success:
-        return const Color(0xFF0D1F12);
-      case SnackBarType.error:
-        return const Color(0xFF2D1215);
-      case SnackBarType.warning:
-        return const Color(0xFF2D2412);
-      case SnackBarType.info:
-        return const Color(0xFF121A2D);
+  // ─── Light: soft tinted surface  |  Dark: deep saturated surface ────────
+  Color _bgColor(bool isDark) {
+    if (isDark) {
+      switch (type) {
+        case SnackBarType.success:
+          return const Color(0xFF0D1F12);
+        case SnackBarType.error:
+          return const Color(0xFF2D1215);
+        case SnackBarType.warning:
+          return const Color(0xFF2D2412);
+        case SnackBarType.info:
+          return const Color(0xFF121A2D);
+      }
+    } else {
+      switch (type) {
+        case SnackBarType.success:
+          return const Color(0xFFF0FDF4);
+        case SnackBarType.error:
+          return const Color(0xFFFEF2F2);
+        case SnackBarType.warning:
+          return const Color(0xFFFFFBEB);
+        case SnackBarType.info:
+          return const Color(0xFFEFF6FF);
+      }
     }
   }
 
-  Color get _accentColor {
-    switch (type) {
-      case SnackBarType.success:
-        return const Color(0xFF4CAF50);
-      case SnackBarType.error:
-        return const Color(0xFFEF5350);
-      case SnackBarType.warning:
-        return const Color(0xFFFFA726);
-      case SnackBarType.info:
-        return const Color(0xFF42A5F5);
+  // ─── Light: vivid mid-tone  |  Dark: slightly brighter vivid ────────────
+  Color _accentColor(bool isDark) {
+    if (isDark) {
+      switch (type) {
+        case SnackBarType.success:
+          return const Color(0xFF4CAF50);
+        case SnackBarType.error:
+          return const Color(0xFFEF5350);
+        case SnackBarType.warning:
+          return const Color(0xFFFFA726);
+        case SnackBarType.info:
+          return const Color(0xFF42A5F5);
+      }
+    } else {
+      switch (type) {
+        case SnackBarType.success:
+          return const Color(0xFF16A34A);
+        case SnackBarType.error:
+          return const Color(0xFFDC2626);
+        case SnackBarType.warning:
+          return const Color(0xFFD97706);
+        case SnackBarType.info:
+          return const Color(0xFF2563EB);
+      }
     }
   }
 
-  Color get _textColor {
-    switch (type) {
-      case SnackBarType.success:
-        return const Color(0xFFB9F6CA);
-      case SnackBarType.error:
-        return const Color(0xFFFFCDD2);
-      case SnackBarType.warning:
-        return const Color(0xFFFFE0B2);
-      case SnackBarType.info:
-        return const Color(0xFFBBDEFB);
+  // ─── Light: dark readable text  |  Dark: light pastel text ─────────────
+  Color _textColor(bool isDark) {
+    if (isDark) {
+      switch (type) {
+        case SnackBarType.success:
+          return const Color(0xFFB9F6CA);
+        case SnackBarType.error:
+          return const Color(0xFFFFCDD2);
+        case SnackBarType.warning:
+          return const Color(0xFFFFE0B2);
+        case SnackBarType.info:
+          return const Color(0xFFBBDEFB);
+      }
+    } else {
+      switch (type) {
+        case SnackBarType.success:
+          return const Color(0xFF14532D);
+        case SnackBarType.error:
+          return const Color(0xFF7F1D1D);
+        case SnackBarType.warning:
+          return const Color(0xFF78350F);
+        case SnackBarType.info:
+          return const Color(0xFF1E3A5F);
+      }
     }
   }
 

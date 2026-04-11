@@ -159,15 +159,22 @@ class AuthProvider extends ChangeNotifier {
         return false;
       }
     } on DioException catch (e) {
-      print('DioException response data: ${e.response?.data}');
-      if (e.response != null && e.response?.data is Map) {
-        _error = e.response?.data['message'] ?? 'Incorrect email or password';
+      debugPrint('DioException response data: ${e.response?.data}');
+      if (e.type == DioExceptionType.connectionTimeout ||
+        e.type == DioExceptionType.receiveTimeout ||
+          e.type == DioExceptionType.sendTimeout) {
+        _error = 'Server tidak merespons. Coba lagi dalam beberapa saat.';
+      } else if (e.type == DioExceptionType.connectionError) {
+        _error =
+            'Tidak ada koneksi internet. Periksa WiFi atau data seluler Anda.';
+      } else if (e.response != null && e.response?.data is Map) {
+        _error = e.response?.data['message'] ?? 'Email atau password salah';
       } else {
-        _error = 'Connection failed: ${e.message}';
+        _error = 'Terjadi kesalahan server. Coba lagi.';
       }
       return false;
     } catch (e) {
-      _error = 'An unexpected error occurred: ${e.toString()}';
+      _error = 'Terjadi kesalahan sistem: ${e.toString()}';
       return false;
     } finally {
       _isLoading = false;
@@ -240,15 +247,21 @@ class AuthProvider extends ChangeNotifier {
         return false;
       }
     } on DioException catch (e) {
-      // Menangkap error dari Axios/Dio (misal status 400/422/500)
-      if (e.response != null && e.response?.data is Map) {
-        _error = e.response?.data['message'] ?? 'Failed to register';
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout ||
+          e.type == DioExceptionType.sendTimeout) {
+        _error = 'Server tidak merespons. Coba lagi dalam beberapa saat.';
+      } else if (e.type == DioExceptionType.connectionError) {
+        _error =
+            'Tidak ada koneksi internet. Periksa WiFi atau data seluler Anda.';
+      } else if (e.response != null && e.response?.data is Map) {
+        _error = e.response?.data['message'] ?? 'Gagal mendaftar';
       } else {
-        _error = 'Failed to register: ${e.message}';
+        _error = 'Terjadi kesalahan server. Coba lagi.';
       }
       return false;
     } catch (e) {
-      _error = 'Terjadi kesalahan sistem';
+      _error = 'Terjadi kesalahan sistem: ${e.toString()}';
       return false;
     } finally {
       // Selalu update UI selesai loading, terlepas berhasil atau error.

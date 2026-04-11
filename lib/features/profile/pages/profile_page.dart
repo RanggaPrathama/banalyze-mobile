@@ -322,7 +322,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               borderRadius: BorderRadius.circular(16),
                             ),
                             backgroundColor: isDark
-                                ? AppColors.darkCard
+                                ? AppColors.darkSurface
                                 : Colors.white,
                             title: Text(
                               'Keluar Aplikasi?',
@@ -386,10 +386,9 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red.shade50.withValues(
-                          alpha: isDark ? 0.1 : 1,
-                        ),
+                        backgroundColor: Colors.red.withOpacity(0.1),
                         foregroundColor: Colors.red.shade600,
+                        side: BorderSide(color: Colors.red.shade900),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
                         ),

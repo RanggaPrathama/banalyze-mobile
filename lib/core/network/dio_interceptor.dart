@@ -10,7 +10,7 @@ import 'package:banalyze/core/network/network_checker.dart';
 
 /// Endpoints that must NOT trigger the refresh-token logic.
 const _authEndpoints = ['/auth/login', '/auth/register'];
-const networkTimeout = Duration(seconds: 15);
+const networkTimeout = Duration(seconds: 20);
 
 bool _isAuthEndpoint(String path) =>
     _authEndpoints.any((ep) => path.contains(ep));
