@@ -12,7 +12,7 @@ class ClassificationProvider extends ChangeNotifier {
 
   /// Minimum confidence percentage (0–100) to consider a result valid.
   /// Raise this to reduce false positives from non-banana objects.
-  static const int threshold = 75;
+  static const int threshold = 80;
 
   ClassificationProvider(this._repository);
 

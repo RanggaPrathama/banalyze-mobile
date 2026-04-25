@@ -42,7 +42,7 @@ class RealtimeClassificationProvider extends ChangeNotifier {
   static const int _minConsensus = 4;
 
   /// Minimum confidence (0–100) per individual frame to enter the buffer.
-  static const int threshold = 75;
+  static const int threshold = 80;
 
   /// Minimum gap between consecutive inferences (ms).
   static const int _inferenceIntervalMs = 900;
@@ -64,6 +64,8 @@ class RealtimeClassificationProvider extends ChangeNotifier {
 
   /// True while the buffer is still warming up (< [_bufferSize] frames seen).
   bool get isBuffering => _buffer.length < _bufferSize;
+
+  int get thresholdValue => threshold;
 
   String get detectedClass {
     if (_stableResult == null) return isBuffering ? 'Scanning...' : '—';

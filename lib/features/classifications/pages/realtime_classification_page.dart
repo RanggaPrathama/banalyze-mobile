@@ -441,8 +441,8 @@ class _DetectionCard extends StatelessWidget {
                 const SizedBox(width: 5),
                 Text(
                   provider.isBelowThreshold
-                      ? 'Accuracy < Threshold: Undefined'
-                      : 'Above threshold (≥70%)',
+                      ? 'Accuracy < Threshold(${provider.thresholdValue}%): Undefined'
+                      : 'Above threshold (${provider.thresholdValue}%)',
                   style: GoogleFonts.poppins(
                     fontSize: 10,
                     color: provider.isBelowThreshold
