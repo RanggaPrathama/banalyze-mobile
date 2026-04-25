@@ -61,7 +61,7 @@ class UpdateDialog extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              'Update Tersedia!',
+              'Update Available!',
               textAlign: TextAlign.center,
               style: GoogleFonts.poppins(
                 fontSize: 17,
@@ -77,10 +77,10 @@ class UpdateDialog extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               forceUpdate
-                  ? 'Versi kamu ($currentVersion) sudah tidak didukung.\n'
-                        'Silakan update ke versi terbaru ($latestVersion) untuk melanjutkan.'
-                  : 'Versi terbaru ($latestVersion) sudah tersedia.\n'
-                        'Update sekarang untuk mendapatkan fitur dan perbaikan terbaru.',
+                  ? 'Your version ($currentVersion) is no longer supported.\n'
+                        'Please update to the latest version ($latestVersion) to continue.'
+                  : 'A new version ($latestVersion) is available.\n'
+                        'Update now to get the latest features and improvements.',
               textAlign: TextAlign.center,
               style: GoogleFonts.poppins(
                 fontSize: 13,
@@ -103,7 +103,7 @@ class UpdateDialog extends StatelessWidget {
                   elevation: 0,
                 ),
                 child: Text(
-                  'Update Sekarang',
+                  'Update Now',
                   style: GoogleFonts.poppins(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -118,7 +118,7 @@ class UpdateDialog extends StatelessWidget {
                 child: TextButton(
                   onPressed: () => Navigator.pop(context),
                   child: Text(
-                    'Nanti Saja',
+                    'Not Now',
                     style: GoogleFonts.poppins(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,

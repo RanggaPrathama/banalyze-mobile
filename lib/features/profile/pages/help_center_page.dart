@@ -59,7 +59,7 @@ class HelpCenterPage extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'Butuh Bantuan?',
+              'Need Help?',
               style: GoogleFonts.poppins(
                 fontSize: 22,
                 fontWeight: FontWeight.w700,
@@ -68,7 +68,7 @@ class HelpCenterPage extends StatelessWidget {
             ),
             const SizedBox(height: 6),
             Text(
-              'Hubungi developer untuk pertanyaan\natau laporan masalah',
+              'Contact the developer for questions\nor issue reports',
               textAlign: TextAlign.center,
               style: GoogleFonts.poppins(
                 fontSize: 13,
@@ -124,7 +124,7 @@ class HelpCenterPage extends StatelessWidget {
                   const SizedBox(height: 16),
                   _InfoRow(
                     icon: Icons.school_rounded,
-                    label: 'Universitas',
+                    label: 'Institution',
                     value: 'Universitas Airlangga',
                     textColor: textColor,
                     subtextColor: subtextColor,
@@ -140,7 +140,7 @@ class HelpCenterPage extends StatelessWidget {
                   const SizedBox(height: 14),
                   _InfoRow(
                     icon: Icons.phone_rounded,
-                    label: 'Telepon',
+                    label: 'Phone',
                     value: '+62 87794413362',
                     textColor: textColor,
                     subtextColor: subtextColor,
@@ -163,7 +163,7 @@ class HelpCenterPage extends StatelessWidget {
                 },
                 icon: const Icon(Icons.call_rounded, size: 20),
                 label: Text(
-                  'Hubungi Developer',
+                  'Call Developer',
                   style: GoogleFonts.poppins(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,

@@ -8,6 +8,9 @@ class HistoryProvider extends ChangeNotifier {
 
   String _selectedFilter = 'All Scans';
   String _searchQuery = '';
+  DateTime? _startDate;
+  DateTime? _endDate;
+
   List<ScanHistory> _scans = [];
   bool _isLoading = false;
   bool _isLoadingMore = false;
@@ -20,6 +23,8 @@ class HistoryProvider extends ChangeNotifier {
 
   String get selectedFilter => _selectedFilter;
   String get searchQuery => _searchQuery;
+  DateTime? get startDate => _startDate;
+  DateTime? get endDate => _endDate;
   List<ScanHistory> get scans => _scans;
   bool get isLoading => _isLoading;
   bool get isLoadingMore => _isLoadingMore;
@@ -33,22 +38,34 @@ class HistoryProvider extends ChangeNotifier {
     'Overripe',
   ];
 
+  /// Convert DateTime to YYYY-MM-DD
+  String? _formatDate(DateTime? date) {
+    if (date == null) return null;
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+  }
+
   /// Call once on init to load first page.
   Future<void> loadInitial() async {
     _isLoading = true;
     _error = null;
+    _scans =
+        []; // Kosongkan list agar indikator loading terlihat saat memfilter/mencari
+    _currentPage = 1;
     notifyListeners();
 
     try {
       final result = await _repository.getHistory(
         page: 1,
         search: _buildSearchQuery(),
+        startDate: _formatDate(_startDate),
+        endDate: _formatDate(_endDate),
       );
       _scans = result.items;
       _currentPage = result.currentPage;
       _lastPage = result.lastPage;
     } catch (e) {
-      _error = 'Gagal memuat riwayat.';
+      _error =
+          'Failed to load history data.'; // Pesan yang lebih elegan dalam bahasa Inggris
       debugPrint('History load error: $e');
     } finally {
       _isLoading = false;
@@ -67,6 +84,8 @@ class HistoryProvider extends ChangeNotifier {
       final result = await _repository.getHistory(
         page: _currentPage + 1,
         search: _buildSearchQuery(),
+        startDate: _formatDate(_startDate),
+        endDate: _formatDate(_endDate),
       );
       _scans.addAll(result.items);
       _currentPage = result.currentPage;
@@ -89,6 +108,8 @@ class HistoryProvider extends ChangeNotifier {
       final result = await _repository.getHistory(
         page: 1,
         search: _buildSearchQuery(),
+        startDate: _formatDate(_startDate),
+        endDate: _formatDate(_endDate),
       );
       _scans = result.items;
       _currentPage = result.currentPage;
@@ -98,6 +119,20 @@ class HistoryProvider extends ChangeNotifier {
       debugPrint('History refresh error: $e');
     }
     notifyListeners();
+  }
+
+  void setDateRange(DateTime? start, DateTime? end) {
+    _startDate = start;
+    _endDate = end;
+    notifyListeners();
+    loadInitial();
+  }
+
+  void clearDateRange() {
+    _startDate = null;
+    _endDate = null;
+    notifyListeners();
+    loadInitial();
   }
 
   void selectFilter(String filter) {
@@ -129,6 +164,7 @@ class HistoryProvider extends ChangeNotifier {
       parts.add(_selectedFilter);
     }
 
+    debugPrint('Built search query: ${parts.join(' ')}');
     return parts.isEmpty ? null : parts.join(' ');
   }
 

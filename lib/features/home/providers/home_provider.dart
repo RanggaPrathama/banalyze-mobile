@@ -22,13 +22,73 @@ class HomeProvider extends ChangeNotifier {
   List<ScanHistory> get recentScans => _recentScans;
   List<ArticleModel> get recentArticles => _recentArticles;
 
+  DateTime? _startDate;
+  DateTime? _endDate;
+
+  DateTime? get startDate => _startDate;
+  DateTime? get endDate => _endDate;
+
+  void setDateRange(DateTime start, DateTime end) {
+    _startDate = start;
+    _endDate = end;
+    notifyListeners();
+  }
+
+  List<ScanHistory> get _filteredScans {
+    if (_startDate == null || _endDate == null) {
+      // Default: Last 7 days
+      final now = DateTime.now();
+      final lastWeek = now.subtract(const Duration(days: 6));
+      final start = DateTime(lastWeek.year, lastWeek.month, lastWeek.day);
+      final end = DateTime(now.year, now.month, now.day, 23, 59, 59);
+
+      final filtered = _recentScans.where((scan) {
+        return (scan.dateTime.isAfter(start) ||
+                scan.dateTime.isAtSameMomentAs(start)) &&
+            (scan.dateTime.isBefore(end) ||
+                scan.dateTime.isAtSameMomentAs(end));
+      }).toList();
+
+      debugPrint(
+        'Filtering (Default 7 Days): start=$start, end=$end | Total scans=${_recentScans.length}, Filtered=$filtered',
+      );
+      return filtered;
+    } else {
+      final start = DateTime(
+        _startDate!.year,
+        _startDate!.month,
+        _startDate!.day,
+      );
+      final end = DateTime(
+        _endDate!.year,
+        _endDate!.month,
+        _endDate!.day,
+        23,
+        59,
+        59,
+      );
+
+      final filtered = _recentScans.where((scan) {
+        return (scan.dateTime.isAfter(start) ||
+                scan.dateTime.isAtSameMomentAs(start)) &&
+            (scan.dateTime.isBefore(end) ||
+                scan.dateTime.isAtSameMomentAs(end));
+      }).toList();
+
+      debugPrint(
+        'Filtering (Custom Range): start=$start, end=$end | Total scans=${_recentScans.length}, Filtered=$filtered',
+      );
+      return filtered;
+    }
+  }
+
   // ── Weekly summary stats
   /// Bar chart data — normalized heights per day of the week.
   List<WeeklyBarData> get weeklyBars {
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     final counts = List<int>.filled(7, 0);
 
-    for (final scan in _recentScans) {
+    for (final scan in _filteredScans) {
       // weekday: 1=Mon … 7=Sun
       final idx = scan.dateTime.weekday - 1;
       counts[idx]++;
@@ -52,20 +112,20 @@ class HomeProvider extends ChangeNotifier {
     return 'GOOD EVENING';
   }
 
-  int get totalScans => _recentScans.length;
+  int get totalScans => _filteredScans.length;
 
   String get avgQuality {
-    if (_recentScans.isEmpty) return '—';
+    if (_filteredScans.isEmpty) return '—';
     final avg =
-        _recentScans.map((s) => s.confidence).reduce((a, b) => a + b) /
-        _recentScans.length;
+        _filteredScans.map((s) => s.confidence).reduce((a, b) => a + b) /
+        _filteredScans.length;
     return '${(avg * 100).round()}%';
   }
 
   String get bestDay {
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     final counts = List<int>.filled(7, 0);
-    for (final scan in _recentScans) {
+    for (final scan in _filteredScans) {
       counts[scan.dateTime.weekday - 1]++;
     }
     final maxCount = counts.reduce((a, b) => a > b ? a : b);
@@ -89,6 +149,9 @@ class HomeProvider extends ChangeNotifier {
     try {
       final result = await _historyRepository.getHistory(noPagination: true);
       _recentScans = result.items;
+      debugPrint(
+        'Loaded recent scans successfully: ${_recentScans.length} items found.',
+      );
     } catch (e) {
       debugPrint('Home load recent scans error: $e');
     } finally {

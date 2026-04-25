@@ -93,8 +93,28 @@ class _PaginatedListViewState<T> extends State<PaginatedListView<T>> {
         physics: const NeverScrollableScrollPhysics(),
         slivers: [
           if (widget.headerSlivers != null) ...widget.headerSlivers!,
-          const SliverFillRemaining(
-            child: Center(child: CircularProgressIndicator()),
+          SliverFillRemaining(
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const CircularProgressIndicator(
+                    strokeWidth: 3,
+                    color: AppColors.primary,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Loading data...',
+                    style: GoogleFonts.poppins(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: hintColor,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       );
@@ -208,33 +228,57 @@ class _PaginatedListViewState<T> extends State<PaginatedListView<T>> {
           if (widget.headerSlivers != null) ...widget.headerSlivers!,
           SliverPadding(
             padding:
-                widget.padding ?? const EdgeInsets.fromLTRB(20, 0, 20, 100),
-            sliver: SliverList.builder(
-              itemCount: widget.items.length + (widget.hasMore ? 1 : 0),
-              itemBuilder: (context, index) {
-                if (index >= widget.items.length) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 24),
-                    child: Center(
-                      child: SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.5,
-                          color: isDark
-                              ? AppColors.darkTextHint
-                              : AppColors.primary,
+                widget.padding ?? const EdgeInsets.symmetric(horizontal: 20),
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  // Render load more indicator at the bottom
+                  if (index == widget.items.length) {
+                    if (widget.isLoadingMore) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 24),
+                        child: Center(
+                          child: SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: const CircularProgressIndicator(
+                              strokeWidth: 2.5,
+                              color: AppColors.primary,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
+                      );
+                    } else if (!widget.hasMore && widget.items.isNotEmpty) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 24),
+                        child: Center(
+                          child: Text(
+                            'You have reached the end.',
+                            style: GoogleFonts.poppins(
+                              fontSize: 12,
+                              color: hintColor,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+                    return const SizedBox(height: 24); // Spacing for end empty
+                  }
+
+                  return widget.itemBuilder(
+                    context,
+                    widget.items[index],
+                    index,
                   );
-                }
-                return widget.itemBuilder(context, widget.items[index], index);
-              },
+                },
+                childCount:
+                    widget.items.length + 1, // +1 for the load-more indicator
+              ),
             ),
           ),
         ],
       ),
     );
   }
-}
+} // End of PaginatedListViewState

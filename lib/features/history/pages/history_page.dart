@@ -102,43 +102,148 @@ class _HistoryBody extends StatelessWidget {
                     const SizedBox(height: 14),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: TextField(
-                        onChanged: provider.updateSearch,
-                        style: GoogleFonts.poppins(
-                          fontSize: 14,
-                          color: textColor,
-                        ),
-                        decoration: InputDecoration(
-                          hintText: 'Search by date or ripeness...',
-                          hintStyle: GoogleFonts.poppins(
-                            fontSize: 13,
-                            color: hintColor,
-                          ),
-                          prefixIcon: Icon(
-                            Icons.search_rounded,
-                            color: hintColor,
-                          ),
-                          filled: true,
-                          fillColor: cardColor,
-                          contentPadding: const EdgeInsets.symmetric(
-                            vertical: 12,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(14),
-                            borderSide: BorderSide.none,
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(14),
-                            borderSide: BorderSide(color: borderColor),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(14),
-                            borderSide: const BorderSide(
-                              color: AppColors.primary,
-                              width: 1.5,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              onChanged: provider.updateSearch,
+                              style: GoogleFonts.poppins(
+                                fontSize: 14,
+                                color: textColor,
+                              ),
+                              decoration: InputDecoration(
+                                hintText: 'Search history...',
+                                hintStyle: GoogleFonts.poppins(
+                                  fontSize: 13,
+                                  color: hintColor,
+                                ),
+                                prefixIcon: Icon(
+                                  Icons.search_rounded,
+                                  color: hintColor,
+                                ),
+                                filled: true,
+                                fillColor: cardColor,
+                                contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                  borderSide: BorderSide.none,
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                  borderSide: BorderSide(color: borderColor),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                  borderSide: const BorderSide(
+                                    color: AppColors.primary,
+                                    width: 1.5,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
-                        ),
+                          const SizedBox(width: 12),
+                          GestureDetector(
+                            onTap: () async {
+                              final now = DateTime.now();
+                              final picked = await showDateRangePicker(
+                                context: context,
+                                initialDateRange:
+                                    provider.startDate != null &&
+                                        provider.endDate != null
+                                    ? DateTimeRange(
+                                        start: provider.startDate!,
+                                        end: provider.endDate!,
+                                      )
+                                    : null,
+                                firstDate: DateTime(2020),
+                                lastDate: now,
+                                builder: (context, child) {
+                                  return Theme(
+                                    data: Theme.of(context).copyWith(
+                                      colorScheme: isDark
+                                          ? const ColorScheme.dark(
+                                              primary: AppColors.primary,
+                                              onPrimary: Colors.white,
+                                              surface: AppColors.darkCard,
+                                              onSurface:
+                                                  AppColors.darkTextPrimary,
+                                            )
+                                          : const ColorScheme.light(
+                                              primary: AppColors.primary,
+                                              onPrimary: Colors.white,
+                                              surface: Colors.white,
+                                              onSurface: AppColors.textPrimary,
+                                            ),
+                                    ),
+                                    child: child!,
+                                  );
+                                },
+                              );
+                              if (picked != null) {
+                                provider.setDateRange(picked.start, picked.end);
+                              }
+                            },
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: (provider.startDate != null)
+                                    ? AppColors.primary
+                                    : cardColor,
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(
+                                  color: (provider.startDate != null)
+                                      ? AppColors.primary
+                                      : borderColor,
+                                ),
+                                boxShadow: (provider.startDate != null)
+                                    ? [
+                                        BoxShadow(
+                                          color: AppColors.primary.withValues(
+                                            alpha: 0.3,
+                                          ),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 4),
+                                        ),
+                                      ]
+                                    : null,
+                              ),
+                              child: Icon(
+                                Icons.calendar_month_rounded,
+                                color: (provider.startDate != null)
+                                    ? Colors.white
+                                    : subtextColor,
+                                size: 24,
+                              ),
+                            ),
+                          ),
+                          if (provider.startDate != null) ...[
+                            const SizedBox(width: 8),
+                            GestureDetector(
+                              onTap: () => provider.clearDateRange(),
+                              child: Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: isDark
+                                      ? Colors.red.withValues(alpha: 0.15)
+                                      : Colors.red.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(14),
+                                  border: Border.all(
+                                    color: Colors.red.withValues(alpha: 0.3),
+                                  ),
+                                ),
+                                child: Icon(
+                                  Icons.clear_rounded,
+                                  color: isDark ? Colors.redAccent : Colors.red,
+                                  size: 24,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                     ),
                     const SizedBox(height: 14),

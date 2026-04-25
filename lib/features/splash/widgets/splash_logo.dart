@@ -40,8 +40,8 @@ class _SplashLogoState extends State<SplashLogo> with TickerProviderStateMixin {
     return ScaleTransition(
       scale: _scaleAnimation,
       child: Container(
-        width: 180,
-        height: 180,
+        width: 130,
+        height: 130,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,

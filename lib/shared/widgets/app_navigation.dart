@@ -231,7 +231,7 @@ class _MainNavigationState extends State<MainNavigation> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         backgroundColor: cardColor,
         title: Text(
-          'Keluar Aplikasi?',
+          'Exit Banalyze?',
           style: GoogleFonts.poppins(
             fontWeight: FontWeight.w700,
             fontSize: 16,
@@ -239,14 +239,14 @@ class _MainNavigationState extends State<MainNavigation> {
           ),
         ),
         content: Text(
-          'Apakah kamu yakin ingin keluar dari aplikasi ini?',
+          'Are you sure you want to exit the application?',
           style: GoogleFonts.poppins(fontSize: 13, color: subtextColor),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
             child: Text(
-              'Batal',
+              'Cancel',
               style: GoogleFonts.poppins(
                 fontWeight: FontWeight.w500,
                 color: subtextColor,
@@ -264,7 +264,7 @@ class _MainNavigationState extends State<MainNavigation> {
               elevation: 0,
             ),
             child: Text(
-              'Ya, Keluar',
+              'Yes, Exit',
               style: GoogleFonts.poppins(
                 fontWeight: FontWeight.w600,
                 fontSize: 13,
@@ -597,7 +597,7 @@ class _LiveDetectionButton extends StatelessWidget {
                     ],
                   ),
                   Text(
-                    'Deteksi kematangan pisang secara real-time',
+                    'Try the new real-time detection feature using your camera',
                     style: GoogleFonts.poppins(
                       fontSize: 11,
                       color: Colors.white.withValues(alpha: 0.55),

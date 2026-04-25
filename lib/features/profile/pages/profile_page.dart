@@ -161,7 +161,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          'USER TERVERIFIKASI',
+                          'Verified User',
                           style: GoogleFonts.poppins(
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
@@ -333,7 +333,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               ),
                             ),
                             content: Text(
-                              'Kamu akan keluar dari akun ini. Yakin ingin melanjutkan?',
+                              'Are you sure you want to log out Banalyze ?',
                               style: GoogleFonts.poppins(
                                 fontSize: 13,
                                 color: subtextColor,
@@ -343,7 +343,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               TextButton(
                                 onPressed: () => Navigator.pop(ctx, false),
                                 child: Text(
-                                  'Batal',
+                                  'Cancel',
                                   style: GoogleFonts.poppins(
                                     fontWeight: FontWeight.w500,
                                     color: subtextColor,
@@ -361,7 +361,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   elevation: 0,
                                 ),
                                 child: Text(
-                                  'Ya, Keluar',
+                                  'Yes, Log Out',
                                   style: GoogleFonts.poppins(
                                     fontWeight: FontWeight.w600,
                                     fontSize: 13,

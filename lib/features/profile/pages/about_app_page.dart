@@ -84,7 +84,7 @@ class AboutAppPage extends StatelessWidget {
               textColor: textColor,
               children: const [
                 AboutTechRow(
-                  label: 'Klasifikasi Model',
+                  label: 'Model Classifier',
                   value: 'EfficientNetV2',
                 ),
                 AboutTechRow(label: 'Optimized With', value: 'TensorRT'),
@@ -120,11 +120,11 @@ class AboutAppPage extends StatelessWidget {
               textColor: textColor,
               subtextColor: subtextColor,
               content:
-                  'Dengan menggunakan aplikasi Banalyze, Anda menyetujui bahwa:\n\n'
-                  '• Aplikasi ini digunakan untuk tujuan edukasi dan analisis kematangan pisang.\n'
-                  '• Hasil klasifikasi bersifat estimasi dan tidak menjamin akurasi 100%.\n'
-                  '• Pengguna bertanggung jawab atas keputusan yang diambil berdasarkan hasil analisis.\n'
-                  '• Dilarang menggunakan aplikasi untuk tujuan yang melanggar hukum.',
+                  'By using the Banalyze application, you agree that:\n\n'
+                  '• This application is used for educational purposes and banana ripeness analysis.\n'
+                  '• Classification results are estimates and do not guarantee 100% accuracy.\n'
+                  '• Users are responsible for any decisions made based on the analysis results.\n'
+                  '• It is prohibited to use the application for any unlawful purposes.',
             ),
             const SizedBox(height: 10),
             _CollapsibleTile(
@@ -135,11 +135,11 @@ class AboutAppPage extends StatelessWidget {
               textColor: textColor,
               subtextColor: subtextColor,
               content:
-                  'Kami menghargai privasi Anda:\n\n'
-                  '• Data gambar yang Anda unggah hanya digunakan untuk proses klasifikasi.\n'
-                  '• Informasi akun (nama, email) disimpan secara aman di server kami.\n'
-                  '• Kami tidak membagikan data pribadi Anda kepada pihak ketiga.\n'
-                  '• Anda dapat menghapus akun dan data Anda kapan saja.',
+                  'We value your privacy:\n\n'
+                  '• Image data you upload is only used for the classification process.\n'
+                  '• Account information (name, email) is securely stored on our servers.\n'
+                  '• We do not share your personal data with third parties.\n'
+                  '• You can delete your account and data at any time.',
             ),
             const SizedBox(height: 10),
             _CollapsibleTile(
@@ -150,16 +150,16 @@ class AboutAppPage extends StatelessWidget {
               textColor: textColor,
               subtextColor: subtextColor,
               content:
-                  'Hubungi kami jika Anda membutuhkan bantuan:\n\n'
+                  'Contact us if you need any assistance:\n\n'
                   '• Email: ranggaprathama9@gmail.com\n'
                   '• WhatsApp: +62 87794413362\n'
-                  '• Jam operasional: Senin–Jumat, 09:00–17:00 WIB',
+                  '• Operating hours: Monday–Friday, 09:00–17:00 WIB',
             ),
             const SizedBox(height: 32),
 
             // Copyright
             Text(
-              '© 2025 Banalyze. All rights reserved.',
+              '© 2026 Banalyze. All rights reserved.',
               style: GoogleFonts.poppins(fontSize: 11, color: hintColor),
             ),
           ],

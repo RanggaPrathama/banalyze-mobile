@@ -43,28 +43,72 @@ class WeeklySummary extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Weekly Summary',
+                'Summary',
                 style: GoogleFonts.poppins(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: textColor,
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: badgeBg,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  'This Week',
-                  style: GoogleFonts.poppins(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w500,
-                    color: badgeText,
+              GestureDetector(
+                onTap: () async {
+                  final provider = context.read<HomeProvider>();
+                  final now = DateTime.now();
+                  final picked = await showDateRangePicker(
+                    context: context,
+                    initialDateRange: DateTimeRange(
+                      start:
+                          provider.startDate ??
+                          now.subtract(const Duration(days: 6)),
+                      end: provider.endDate ?? now,
+                    ),
+                    firstDate: DateTime(2020),
+                    lastDate: now,
+                  );
+                  if (picked != null) {
+                    provider.setDateRange(picked.start, picked.end);
+                  }
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: badgeBg,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.calendar_today, size: 12, color: badgeText),
+                      const SizedBox(width: 4),
+                      Builder(
+                        builder: (context) {
+                          final provider = context.watch<HomeProvider>();
+                          final isDefault =
+                              provider.startDate == null &&
+                              provider.endDate == null;
+                          String labelText = 'This Week';
+                          if (!isDefault) {
+                            final startStr =
+                                "${provider.startDate!.day}/${provider.startDate!.month}";
+                            final endStr =
+                                "${provider.endDate!.day}/${provider.endDate!.month}";
+                            labelText = "$startStr - $endStr";
+                          }
+                          return Text(
+                            labelText,
+                            style: GoogleFonts.poppins(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w500,
+                              color: badgeText,
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(width: 2),
+                      Icon(Icons.arrow_drop_down, size: 14, color: badgeText),
+                    ],
                   ),
                 ),
               ),

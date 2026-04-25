@@ -74,7 +74,7 @@ class ScanSummaryCard extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           _SummaryRow(
-            label: 'OVERRIPE / UNRIPE',
+            label: 'OVERRIPE',
             count: overripeUnripeCount,
             color: AppColors.overripe,
             maxCount: maxCount,
